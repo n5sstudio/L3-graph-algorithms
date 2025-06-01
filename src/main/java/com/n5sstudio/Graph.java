@@ -15,6 +15,46 @@ public class Graph {
 
     public Graph() {
         this.maximumNumberOfVertex = DEFAULT_MAXIMUM_NUMBER_OF_VERTEX;
+        initGraph(this.maximumNumberOfVertex);
+    }
+
+    public Graph(int[][] adjacencyMatrix) {
+        this.maximumNumberOfVertex = 2 * adjacencyMatrix.length;
+        initGraph(this.maximumNumberOfVertex);
+
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                if ((adjacencyMatrix[i][j] != DEFAULT_NON_EXISTING_ARC_VALUE)) {
+                    this.vertexExistanceArray[i] = true;
+                    this.vertexExistanceArray[j] = true;
+                    this.adjacencyMatrix[i][j] = adjacencyMatrix[i][j];
+                }
+            }
+        }
+    }
+
+    public Graph(int maximumNumberOfVertex) {
+        this.maximumNumberOfVertex = maximumNumberOfVertex;
+        initGraph(this.maximumNumberOfVertex);
+    }
+
+    public Graph(Graph graph) {
+        this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
+        initGraph(this.maximumNumberOfVertex);
+
+        this.vertexExistanceArray = Arrays.copyOf(graph.vertexExistanceArray, graph.maximumNumberOfVertex);
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                this.adjacencyMatrix[i][j] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                if (graph.hasArc(i, j)) {
+                    this.addArc(i, j, graph.getArcValue(i, j));
+                }
+            }
+        }
+    }
+
+    private void initGraph(int maximumNumberOfVertex) {
+        this.maximumNumberOfVertex = maximumNumberOfVertex;
         this.adjacencyMatrix = new int[this.maximumNumberOfVertex][this.maximumNumberOfVertex];
         this.vertexExistanceArray = new boolean[maximumNumberOfVertex];
         for (int i = 0; i < maximumNumberOfVertex; i++) {
@@ -25,45 +65,12 @@ public class Graph {
         }
     }
 
-    public Graph(int[][] adjacencyMatrix) {
-        this.maximumNumberOfVertex = 2 * adjacencyMatrix.length;
-        this.adjacencyMatrix = new int[this.maximumNumberOfVertex][this.maximumNumberOfVertex];
-        this.vertexExistanceArray = new boolean[this.maximumNumberOfVertex];
-        for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            if (i < adjacencyMatrix.length) {
-                this.vertexExistanceArray[i] = true;
-            } else {
-                this.vertexExistanceArray[i] = false;
-            }
-            for (int j = 0; j < this.maximumNumberOfVertex; j++) {
-                if ((i < adjacencyMatrix.length) && (j < adjacencyMatrix.length)) {
-                    this.adjacencyMatrix[i][j] = adjacencyMatrix[i][j];
-                } else {
-                    this.adjacencyMatrix[i][j] = DEFAULT_NON_EXISTING_ARC_VALUE;
-                }
-            }
-        }
-    }
-
-    public Graph(int maximumNumberOfVertex) {
-        this.maximumNumberOfVertex = maximumNumberOfVertex;
-        this.adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
-        this.vertexExistanceArray = new boolean[maximumNumberOfVertex];
-        for (int k = 0; k < maximumNumberOfVertex; k++) {
-            this.vertexExistanceArray[k] = false;
-            for (int j = 0; j < maximumNumberOfVertex; j++) {
-                this.adjacencyMatrix[k][j] = DEFAULT_NON_EXISTING_ARC_VALUE;
-            }
-        }
-    }
-
-    public Graph(Graph graph) {
-        this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
-        this.vertexExistanceArray = Arrays.copyOf(graph.vertexExistanceArray, graph.maximumNumberOfVertex);
-    }
-
     public int getUndefiledValue() {
         return Graph.DEFAULT_NON_EXISTING_ARC_VALUE;
+    }
+
+    public int getMaximumNumberOfVertex() {
+        return this.maximumNumberOfVertex;
     }
 
     public boolean hasVertex(int vertexIndex) {
@@ -102,7 +109,7 @@ public class Graph {
     }
 
     public boolean hasArc(int originVertexIndex, int destinationVertexIndex) {
-        return (this.hasVertex(originVertexIndex) && this.hasVertex(destinationVertexIndex)
+        return ((this.hasVertex(originVertexIndex) && this.hasVertex(destinationVertexIndex))
                 && this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] != DEFAULT_NON_EXISTING_ARC_VALUE);
     }
 
@@ -154,36 +161,38 @@ public class Graph {
     }
 
     public int[] getSuccessorList(int vertexIndex) {
-        int[] liste = new int[maximumNumberOfVertex];
+        int[] list = new int[maximumNumberOfVertex];
         int k = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
-                liste[k] = j;
+                list[k] = j;
                 k++;
             } else {
-                liste[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                list[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                k++;
             }
         }
-        return liste;
+        return list;
     }
 
     public int[] getPredecessorList(int vertexIndex) {
-        int[] liste = new int[maximumNumberOfVertex];
+        int[] list = new int[maximumNumberOfVertex];
         int k = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {
-                liste[k] = j;
+                list[k] = j;
                 k++;
             } else {
-                liste[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                list[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                k++;
             }
         }
-        return liste;
+        return list;
     }
 
     public boolean isReflexive() {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            if (this.adjacencyMatrix[i][i] == DEFAULT_NON_EXISTING_ARC_VALUE) {
+            if (this.hasVertex(i) && !this.hasArc(i, i)) {
                 return false;
             }
         }
@@ -192,7 +201,7 @@ public class Graph {
 
     public boolean isIrreflexive() {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            if (this.adjacencyMatrix[i][i] != DEFAULT_NON_EXISTING_ARC_VALUE) {
+            if (this.hasArc(i, i)) {
                 return false;
             }
         }
@@ -202,7 +211,7 @@ public class Graph {
     public boolean isSymmetric() {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = i; j < this.maximumNumberOfVertex; j++) {
-                if (this.adjacencyMatrix[i][j] != this.adjacencyMatrix[j][i]) {
+                if (this.hasArc(i, j) && !this.hasArc(j, i)) {
                     return false;
                 }
             }
@@ -213,7 +222,7 @@ public class Graph {
     public boolean isAntisymmetric() {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = i + 1; j < this.maximumNumberOfVertex; j++) {
-                if (this.adjacencyMatrix[i][j] == this.adjacencyMatrix[j][i]) {
+                if (this.hasArc(i, j) && this.hasArc(j, i)) {
                     return false;
                 }
             }
@@ -250,7 +259,7 @@ public class Graph {
     public void transpose() {
         int tmp;
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+            for (int j = i + 1; j < this.maximumNumberOfVertex; j++) {
                 tmp = this.adjacencyMatrix[i][j];
                 this.adjacencyMatrix[i][j] = this.adjacencyMatrix[j][i];
                 this.adjacencyMatrix[j][i] = tmp;

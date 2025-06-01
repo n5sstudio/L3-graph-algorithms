@@ -1,98 +1,82 @@
-/* *******************************
- *** CLASSE GRAPHE             ***
- *** Author : Nicolas          ***
- ******************************* */
-
 public class Graphe {
-    private int[][] U; // Matrice d'adjacence.
-    private int NMAX; // Nombre maximum de sommets.
-    private boolean[] valid; // Tableau d'existance sommets.
-    private static int ALPHA_NOTDEF = 0;
 
-    /*
-     * ********************************
-     *** CREATION DES CONSTRUCTEURS ***
-     */
-
-    // CONSTRUCTEUR GRAPHE VIDE.
+    private int[][] adjacencyMatrix;
+    private int maximumNumberOfVertex;
+    private boolean[] vertexExistanceArray;
+    private static int UNDEFINED = 0;
+    
     public Graphe() {
-        NMAX = 1000;
-        U = new int[NMAX][NMAX];
-        valid = new boolean[NMAX];
-        for (int i = 0; i < NMAX; i++) {
-            valid[i] = false;
-            for (int j = 0; j < NMAX; j++) {
-                U[i][j] = ALPHA_NOTDEF;
+        maximumNumberOfVertex = 1000;
+        adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
+        vertexExistanceArray = new boolean[maximumNumberOfVertex];
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            vertexExistanceArray[i] = false;
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                adjacencyMatrix[i][j] = UNDEFINED;
             }
         }
     }
-
-    // CONSTRUCTEUR GRAPHE ; PARAM. MATRICE D'ADJACENCE.
-    public Graphe(int[][] mat) {
-        NMAX = 2 * mat.length;
-        U = new int[NMAX][NMAX];
-        valid = new boolean[NMAX];
-        for (int i = 0; i < NMAX; i++) {
-            if (i < mat.length) {
-                valid[i] = true;
+    
+    public Graphe(int[][] adjacencyMatrix) {
+        maximumNumberOfVertex = 2 * adjacencyMatrix.length;
+        adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
+        vertexExistanceArray = new boolean[maximumNumberOfVertex];
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            if (i < adjacencyMatrix.length) {
+                vertexExistanceArray[i] = true;
             } else {
-                valid[i] = false;
+                vertexExistanceArray[i] = false;
             }
-            for (int j = 0; j < NMAX; j++) {
-                if ((i < mat.length) && (j < mat.length)) {
-                    U[i][j] = mat[i][j];
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                if ((i < adjacencyMatrix.length) && (j < adjacencyMatrix.length)) {
+                    adjacencyMatrix[i][j] = adjacencyMatrix[i][j];
                 } else {
-                    U[i][j] = ALPHA_NOTDEF;
+                    adjacencyMatrix[i][j] = UNDEFINED;
                 }
             }
         }
     }
 
     // CONSTRUCTEUR GRAPHE ; PARAM. NB MAXI DE SOMMETS.
-    public Graphe(int i) {
-        NMAX = i;
-        U = new int[NMAX][NMAX];
-        valid = new boolean[NMAX];
-        for (int k = 0; k < NMAX; k++) {
-            valid[k] = false;
-            for (int j = 0; j < NMAX; j++) {
-                U[k][j] = ALPHA_NOTDEF;
+    public Graphe(int maximumNumberOfVertex) {
+        this.maximumNumberOfVertex = maximumNumberOfVertex;
+        adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
+        vertexExistanceArray = new boolean[maximumNumberOfVertex];
+        for (int k = 0; k < maximumNumberOfVertex; k++) {
+            vertexExistanceArray[k] = false;
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                adjacencyMatrix[k][j] = UNDEFINED;
             }
         }
     }
 
     // CONSTRUCTEUR GRAPHE CLONE ; PARAM. GRAPHE.
-    public Graphe(Graphe g) {
-        NMAX = g.NMAX;
-        for (int i = 0; i < NMAX; i++) {
-            valid[i] = g.valid[i];
+    public Graphe(Graphe graph) {
+        maximumNumberOfVertex = graph.maximumNumberOfVertex;
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            vertexExistanceArray[i] = graph.vertexExistanceArray[i];
         }
     }
 
-    /*
-     * ***************************
-     *** CREATION DES METHODES ***
-     */
-
     // EXISTANCE D'UN SOMMET.
-    public boolean existeSommet(int i) {
-        return valid[i];
+    public boolean existeSommet(int vertexIndex) {
+        return vertexExistanceArray[vertexIndex];
     }
 
     // NOMBRE DE SOMMETS
     public int nbSommet() {
         int cpt = 0;
-        for (int i = 0; i < NMAX; i++) {
-            if (valid[i])
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            if (vertexExistanceArray[i])
                 cpt++;
         }
         return cpt;
     }
 
     // AJOUTER UN SOMMET.
-    public boolean ajoutSommet(int i) {
-        if (i < NMAX && !existeSommet(i)) {
-            valid[i] = true;
+    public boolean ajoutSommet(int vertexIndex) {
+        if (vertexIndex < maximumNumberOfVertex && !existeSommet(vertexIndex)) {
+            vertexExistanceArray[vertexIndex] = true;
             return true;
         } else {
             return false;
@@ -100,22 +84,22 @@ public class Graphe {
     }
 
     // SUPPRIMER UN SOMMET.
-    public boolean supprimeSommet(int i) {
-        if (!existeSommet(i)) {
+    public boolean supprimeSommet(int vertexIndex) {
+        if (!existeSommet(vertexIndex)) {
             return false;
         } else {
-            for (int j = 0; j < NMAX; j++) {
-                U[i][j] = ALPHA_NOTDEF;
-                U[j][i] = ALPHA_NOTDEF;
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                adjacencyMatrix[vertexIndex][j] = UNDEFINED;
+                adjacencyMatrix[j][vertexIndex] = UNDEFINED;
             }
-            valid[i] = false;
+            vertexExistanceArray[vertexIndex] = false;
             return true;
         }
     }
 
     // EXISTANCE D'UN ARC.
-    public boolean existeArc(int i, int j) {
-        if (existeSommet(i) && existeSommet(j) && U[i][j] != ALPHA_NOTDEF) {
+    public boolean existeArc(int originVertexIndex, int destinationVertexIndex) {
+        if (existeSommet(originVertexIndex) && existeSommet(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] != UNDEFINED) {
             return true;
         } else {
             return false;
@@ -123,18 +107,18 @@ public class Graphe {
     }
 
     // VALEUR D'UN ARC.
-    public int getValArc(int i, int j) {
-        if (existeArc(i, j)) {
-            return U[i][j];
+    public int getValArc(int originVertexIndex, int destinationVertexIndex) {
+        if (existeArc(originVertexIndex, destinationVertexIndex)) {
+            return adjacencyMatrix[originVertexIndex][destinationVertexIndex];
         } else {
-            return ALPHA_NOTDEF;
+            return UNDEFINED;
         }
     }
 
     // AJOUTER UN ARC.
-    public boolean ajoutArc(int i, int j, int val) {
-        if (existeSommet(i) && existeSommet(j) && U[i][j] == ALPHA_NOTDEF) {
-            U[i][j] = val;
+    public boolean ajoutArc(int originVertexIndex, int destinationVertexIndex, int val) {
+        if (existeSommet(originVertexIndex) && existeSommet(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] == UNDEFINED) {
+            adjacencyMatrix[originVertexIndex][destinationVertexIndex] = val;
             return true;
         } else {
             return false;
@@ -142,9 +126,9 @@ public class Graphe {
     }
 
     // SUPPRIMER UN ARC.
-    public boolean supprimeArc(int i, int j) {
-        if (existeArc(i, j)) {
-            U[i][j] = ALPHA_NOTDEF;
+    public boolean supprimeArc(int originVertexIndex, int destinationVertexIndex) {
+        if (existeArc(originVertexIndex, destinationVertexIndex)) {
+            adjacencyMatrix[originVertexIndex][destinationVertexIndex] = UNDEFINED;
             return true;
         } else {
             return false;
@@ -152,55 +136,55 @@ public class Graphe {
     }
 
     // DEGRE SORTANT
-    public int degreSortant(int i) {
+    public int degreSortant(int vertexIndex) {
         int degE = 0;
-        for (int j = 0; j < NMAX; j++) {
-            if (U[i][j] != ALPHA_NOTDEF)
+        for (int j = 0; j < maximumNumberOfVertex; j++) {
+            if (adjacencyMatrix[vertexIndex][j] != UNDEFINED)
                 degE++;
         }
         return degE;
     }
 
     // DEGRE ENTRANT
-    public int degreEntrant(int i) {
+    public int degreEntrant(int vertexIndex) {
         int degS = 0;
-        for (int j = 0; j < NMAX; j++) {
-            if (U[j][i] != ALPHA_NOTDEF)
+        for (int j = 0; j < maximumNumberOfVertex; j++) {
+            if (adjacencyMatrix[j][vertexIndex] != UNDEFINED)
                 degS++;
         }
         return degS;
     }
 
     // DEGRE
-    public int degre(int i) {
-        return degreEntrant(i) + degreSortant(i);
+    public int degre(int vertexIndex) {
+        return degreEntrant(vertexIndex) + degreSortant(vertexIndex);
     }
 
     // LISTE DES SUCCESSEURS.
-    public int[] lst_succ(int i) {
-        int[] liste = new int[NMAX];
+    public int[] lst_succ(int vertexIndex) {
+        int[] liste = new int[maximumNumberOfVertex];
         int k = 0;
-        for (int j = 0; j < NMAX; j++) {
-            if (existeArc(i, j)) {
+        for (int j = 0; j < maximumNumberOfVertex; j++) {
+            if (existeArc(vertexIndex, j)) {
                 liste[k] = j;
                 k++;
             } else {
-                liste[k] = ALPHA_NOTDEF;
+                liste[k] = UNDEFINED;
             }
         }
         return liste;
     }
 
     // LISTE DES PREDECESSEURS
-    public int[] lst_pred(int i) {
-        int[] liste = new int[NMAX];
+    public int[] lst_pred(int vertexIndex) {
+        int[] liste = new int[maximumNumberOfVertex];
         int k = 0;
-        for (int j = 0; j < NMAX; j++) {
-            if (existeSommet(i) && existeSommet(j) && U[j][i] != ALPHA_NOTDEF) {
+        for (int j = 0; j < maximumNumberOfVertex; j++) {
+            if (existeSommet(vertexIndex) && existeSommet(j) && adjacencyMatrix[j][vertexIndex] != UNDEFINED) {
                 liste[k] = j;
                 k++;
             } else {
-                liste[k] = ALPHA_NOTDEF;
+                liste[k] = UNDEFINED;
             }
         }
         return liste;
@@ -210,7 +194,7 @@ public class Graphe {
     public java.lang.String toString() {
         String ch = "";
         int[] lst_sommet;
-        for (int i = 0; i < NMAX; i++) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (existeSommet(i)) {
                 lst_sommet = lst_succ(i);
                 ch = ch + i + " :";
@@ -226,8 +210,8 @@ public class Graphe {
     // R�flexivit�
     public boolean estReflexif() {
         boolean Refl = true;
-        for (int i = 0; i < NMAX; i++) {
-            if (U[i][i] != ALPHA_NOTDEF) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            if (adjacencyMatrix[i][i] != UNDEFINED) {
                 Refl = Refl && true;
             } else {
                 Refl = false;
@@ -239,8 +223,8 @@ public class Graphe {
     // Anti-R�flexivit�
     public boolean estAntiReflexif() {
         boolean ARefl = true;
-        for (int i = 0; i < NMAX; i++) {
-            if (U[i][i] != ALPHA_NOTDEF) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            if (adjacencyMatrix[i][i] != UNDEFINED) {
                 ARefl = false;
             } else {
                 ARefl = ARefl && true;
@@ -252,9 +236,9 @@ public class Graphe {
     // Sym�trie
     public boolean estSymetrique() {
         boolean Sym = true;
-        for (int i = 0; i < NMAX; i++) {
-            for (int j = 0; j < NMAX; j++) {
-                if (U[i][j] != ALPHA_NOTDEF && U[i][j] != ALPHA_NOTDEF) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                if (adjacencyMatrix[i][j] != UNDEFINED && adjacencyMatrix[i][j] != UNDEFINED) {
                     Sym = Sym && true;
                 } else {
                     Sym = false;
@@ -267,9 +251,9 @@ public class Graphe {
     // Anti-Sym�trie
     public boolean estAntiSymetrique() {
         boolean ASym = true;
-        for (int i = 0; i < NMAX; i++) {
-            for (int j = 0; j < NMAX; j++) {
-                if (i != j && U[i][j] == ALPHA_NOTDEF && U[i][j] != ALPHA_NOTDEF) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                if (i != j && adjacencyMatrix[i][j] == UNDEFINED && adjacencyMatrix[i][j] != UNDEFINED) {
                     ASym = ASym && true;
                 } else {
                     ASym = false;
@@ -282,9 +266,9 @@ public class Graphe {
     // Transitivit�
     public boolean estTransitif() {
         boolean Trans = true;
-        for (int i = 0; i < NMAX; i++) {
-            for (int j = 0; j < NMAX; j++) {
-                for (int k = 0; k < NMAX; k++) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                for (int k = 0; k < maximumNumberOfVertex; k++) {
                     if (existeArc(i, j) && existeArc(j, k) && existeArc(i, k)) {
                         Trans = Trans && true;
                     } else {
@@ -299,9 +283,9 @@ public class Graphe {
     // Anti-Transitivit�
     public boolean estAntiTransitif() {
         boolean ATrans = true;
-        for (int i = 0; i < NMAX; i++) {
-            for (int j = 0; j < NMAX; j++) {
-                for (int k = 0; k < NMAX; k++) {
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                for (int k = 0; k < maximumNumberOfVertex; k++) {
                     if (existeArc(i, j) && existeArc(j, k) && existeArc(i, k) == false) {
                         ATrans = ATrans && true;
                     } else {
@@ -316,11 +300,11 @@ public class Graphe {
     // Transposition
     public void transposition() {
         int tmp;
-        for (int i = 0; i < NMAX; i++) {
-            for (int j = 0; j < NMAX; j++) {
-                tmp = U[i][j];
-                U[i][j] = U[j][i];
-                U[j][i] = tmp;
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            for (int j = 0; j < maximumNumberOfVertex; j++) {
+                tmp = adjacencyMatrix[i][j];
+                adjacencyMatrix[i][j] = adjacencyMatrix[j][i];
+                adjacencyMatrix[j][i] = tmp;
             }
         }
     }

@@ -31,7 +31,7 @@ public class Graph {
             }
             for (int j = 0; j < maximumNumberOfVertex; j++) {
                 if ((i < adjacencyMatrix.length) && (j < adjacencyMatrix.length)) {
-                    adjacencyMatrix[i][j] = adjacencyMatrix[i][j];
+                    this.adjacencyMatrix[i][j] = adjacencyMatrix[i][j];
                 } else {
                     adjacencyMatrix[i][j] = UNDEFINED;
                 }
@@ -211,7 +211,7 @@ public class Graph {
         boolean Sym = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
-                if (adjacencyMatrix[i][j] != UNDEFINED && adjacencyMatrix[i][j] != UNDEFINED) {
+                if (adjacencyMatrix[i][j] != UNDEFINED && adjacencyMatrix[j][i] != UNDEFINED) {
                     Sym = Sym && true;
                 } else {
                     Sym = false;

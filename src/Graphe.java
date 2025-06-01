@@ -59,12 +59,12 @@ public class Graphe {
     }
 
     // EXISTANCE D'UN SOMMET.
-    public boolean existeSommet(int vertexIndex) {
+    public boolean hasVertex(int vertexIndex) {
         return vertexExistanceArray[vertexIndex];
     }
 
     // NOMBRE DE SOMMETS
-    public int nbSommet() {
+    public int getVertexCount() {
         int cpt = 0;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (vertexExistanceArray[i])
@@ -74,8 +74,8 @@ public class Graphe {
     }
 
     // AJOUTER UN SOMMET.
-    public boolean ajoutSommet(int vertexIndex) {
-        if (vertexIndex < maximumNumberOfVertex && !existeSommet(vertexIndex)) {
+    public boolean addVertex(int vertexIndex) {
+        if (vertexIndex < maximumNumberOfVertex && !hasVertex(vertexIndex)) {
             vertexExistanceArray[vertexIndex] = true;
             return true;
         } else {
@@ -84,8 +84,8 @@ public class Graphe {
     }
 
     // SUPPRIMER UN SOMMET.
-    public boolean supprimeSommet(int vertexIndex) {
-        if (!existeSommet(vertexIndex)) {
+    public boolean deleteVertex(int vertexIndex) {
+        if (!hasVertex(vertexIndex)) {
             return false;
         } else {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
@@ -98,8 +98,8 @@ public class Graphe {
     }
 
     // EXISTANCE D'UN ARC.
-    public boolean existeArc(int originVertexIndex, int destinationVertexIndex) {
-        if (existeSommet(originVertexIndex) && existeSommet(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] != UNDEFINED) {
+    public boolean hasArc(int originVertexIndex, int destinationVertexIndex) {
+        if (hasVertex(originVertexIndex) && hasVertex(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] != UNDEFINED) {
             return true;
         } else {
             return false;
@@ -107,8 +107,8 @@ public class Graphe {
     }
 
     // VALEUR D'UN ARC.
-    public int getValArc(int originVertexIndex, int destinationVertexIndex) {
-        if (existeArc(originVertexIndex, destinationVertexIndex)) {
+    public int getArcValue(int originVertexIndex, int destinationVertexIndex) {
+        if (hasArc(originVertexIndex, destinationVertexIndex)) {
             return adjacencyMatrix[originVertexIndex][destinationVertexIndex];
         } else {
             return UNDEFINED;
@@ -116,8 +116,8 @@ public class Graphe {
     }
 
     // AJOUTER UN ARC.
-    public boolean ajoutArc(int originVertexIndex, int destinationVertexIndex, int val) {
-        if (existeSommet(originVertexIndex) && existeSommet(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] == UNDEFINED) {
+    public boolean addArc(int originVertexIndex, int destinationVertexIndex, int val) {
+        if (hasVertex(originVertexIndex) && hasVertex(destinationVertexIndex) && adjacencyMatrix[originVertexIndex][destinationVertexIndex] == UNDEFINED) {
             adjacencyMatrix[originVertexIndex][destinationVertexIndex] = val;
             return true;
         } else {
@@ -126,8 +126,8 @@ public class Graphe {
     }
 
     // SUPPRIMER UN ARC.
-    public boolean supprimeArc(int originVertexIndex, int destinationVertexIndex) {
-        if (existeArc(originVertexIndex, destinationVertexIndex)) {
+    public boolean deleteArc(int originVertexIndex, int destinationVertexIndex) {
+        if (hasArc(originVertexIndex, destinationVertexIndex)) {
             adjacencyMatrix[originVertexIndex][destinationVertexIndex] = UNDEFINED;
             return true;
         } else {
@@ -136,7 +136,7 @@ public class Graphe {
     }
 
     // DEGRE SORTANT
-    public int degreSortant(int vertexIndex) {
+    public int getVertexOutDegree(int vertexIndex) {
         int degE = 0;
         for (int j = 0; j < maximumNumberOfVertex; j++) {
             if (adjacencyMatrix[vertexIndex][j] != UNDEFINED)
@@ -146,7 +146,7 @@ public class Graphe {
     }
 
     // DEGRE ENTRANT
-    public int degreEntrant(int vertexIndex) {
+    public int getVertexInDegree(int vertexIndex) {
         int degS = 0;
         for (int j = 0; j < maximumNumberOfVertex; j++) {
             if (adjacencyMatrix[j][vertexIndex] != UNDEFINED)
@@ -156,16 +156,16 @@ public class Graphe {
     }
 
     // DEGRE
-    public int degre(int vertexIndex) {
-        return degreEntrant(vertexIndex) + degreSortant(vertexIndex);
+    public int getVertexDegree(int vertexIndex) {
+        return getVertexInDegree(vertexIndex) + getVertexOutDegree(vertexIndex);
     }
 
     // LISTE DES SUCCESSEURS.
-    public int[] lst_succ(int vertexIndex) {
+    public int[] getSuccessorList(int vertexIndex) {
         int[] liste = new int[maximumNumberOfVertex];
         int k = 0;
         for (int j = 0; j < maximumNumberOfVertex; j++) {
-            if (existeArc(vertexIndex, j)) {
+            if (hasArc(vertexIndex, j)) {
                 liste[k] = j;
                 k++;
             } else {
@@ -176,11 +176,11 @@ public class Graphe {
     }
 
     // LISTE DES PREDECESSEURS
-    public int[] lst_pred(int vertexIndex) {
+    public int[] getPredecessorList(int vertexIndex) {
         int[] liste = new int[maximumNumberOfVertex];
         int k = 0;
         for (int j = 0; j < maximumNumberOfVertex; j++) {
-            if (existeSommet(vertexIndex) && existeSommet(j) && adjacencyMatrix[j][vertexIndex] != UNDEFINED) {
+            if (hasVertex(vertexIndex) && hasVertex(j) && adjacencyMatrix[j][vertexIndex] != UNDEFINED) {
                 liste[k] = j;
                 k++;
             } else {
@@ -195,10 +195,10 @@ public class Graphe {
         String ch = "";
         int[] lst_sommet;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
-            if (existeSommet(i)) {
-                lst_sommet = lst_succ(i);
+            if (hasVertex(i)) {
+                lst_sommet = getSuccessorList(i);
                 ch = ch + i + " :";
-                for (int j = 0; j < degreSortant(i); j++) {
+                for (int j = 0; j < getVertexOutDegree(i); j++) {
                     ch = ch + lst_sommet[j];
                 }
                 ch = ch + "\n";
@@ -208,7 +208,7 @@ public class Graphe {
     }
 
     // R�flexivit�
-    public boolean estReflexif() {
+    public boolean isReflexive() {
         boolean Refl = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (adjacencyMatrix[i][i] != UNDEFINED) {
@@ -221,7 +221,7 @@ public class Graphe {
     }
 
     // Anti-R�flexivit�
-    public boolean estAntiReflexif() {
+    public boolean isIrreflexive() {
         boolean ARefl = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (adjacencyMatrix[i][i] != UNDEFINED) {
@@ -234,7 +234,7 @@ public class Graphe {
     }
 
     // Sym�trie
-    public boolean estSymetrique() {
+    public boolean isSymmetric() {
         boolean Sym = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
@@ -249,7 +249,7 @@ public class Graphe {
     }
 
     // Anti-Sym�trie
-    public boolean estAntiSymetrique() {
+    public boolean isAntisymmetric() {
         boolean ASym = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
@@ -264,12 +264,12 @@ public class Graphe {
     }
 
     // Transitivit�
-    public boolean estTransitif() {
+    public boolean isTransitive() {
         boolean Trans = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
                 for (int k = 0; k < maximumNumberOfVertex; k++) {
-                    if (existeArc(i, j) && existeArc(j, k) && existeArc(i, k)) {
+                    if (hasArc(i, j) && hasArc(j, k) && hasArc(i, k)) {
                         Trans = Trans && true;
                     } else {
                         Trans = false;
@@ -281,12 +281,12 @@ public class Graphe {
     }
 
     // Anti-Transitivit�
-    public boolean estAntiTransitif() {
+    public boolean isAntiTransitive() {
         boolean ATrans = true;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
                 for (int k = 0; k < maximumNumberOfVertex; k++) {
-                    if (existeArc(i, j) && existeArc(j, k) && existeArc(i, k) == false) {
+                    if (hasArc(i, j) && hasArc(j, k) && hasArc(i, k) == false) {
                         ATrans = ATrans && true;
                     } else {
                         ATrans = false;
@@ -298,7 +298,7 @@ public class Graphe {
     }
 
     // Transposition
-    public void transposition() {
+    public void transpose() {
         int tmp;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             for (int j = 0; j < maximumNumberOfVertex; j++) {
@@ -316,37 +316,37 @@ public class Graphe {
     // coh�rent
     public static void main(String[] args) {
         Graphe g = new Graphe(10); // On cr�e le graphe g pouvant disposer de 10 sommets au maximum
-        System.out.println(g.existeSommet(2)); // FALSE, en effet le sommet 2 n'existe pas.
-        System.out.println(g.ajoutSommet(1)); // TRUE, le sommet 1 vient d'�tre cr�e
-        System.out.println(g.ajoutSommet(2)); // TRUE, le sommet 2 vient d'�tre cr�e
-        System.out.println(g.ajoutSommet(3)); // TRUE, le sommet 3 vient d'�tre cr�e
-        System.out.println(g.existeSommet(1)); // TRUE, en effet le sommet 1 existe
-        System.out.println(g.nbSommet()); // 3, il y a bien 3 sommets dans le Graphe g
-        System.out.println(g.existeArc(1, 3)); // FALSE, en effet l'arc n'existe pas
-        System.out.println(g.getValArc(1, 2)); // 0, 0 correspond � ALPHA_NOTDEF, l'arc n'existe pas
-        System.out.println(g.ajoutArc(1, 3, 5)); // TRUE, l'arc 1-3 vient d'�tre cr�e et a pour valeur 5
-        System.out.println(g.ajoutArc(1, 2, 3)); // TRUE, l'arc 1-2 vient d'�tre cr�e et a pour valeur 3
-        System.out.println(g.getValArc(1, 2)); // 3, l'arc 1-3 a pour valeur 3
-        System.out.println(g.getValArc(3, 1)); // 0, l'arc 3-1 n'existe pas !
-        System.out.println(g.ajoutSommet(4)); // TRUE, le sommet 4 vient d'�tre cr�e
-        System.out.println(g.existeSommet(4)); // TRUE, en effet le sommet 4 existe
-        System.out.println(g.supprimeSommet(4)); // TRUE, le sommet 4 est supprim�
-        System.out.println(g.existeSommet(4)); // FALSE, en effet le sommet 4 n'existe plus
-        System.out.println(g.degreEntrant(1)); // 0 qui est bien le degr�s entrant de 1
-        System.out.println(g.degreEntrant(2)); // 1 qui est bien le degr�s entrant de 2
-        System.out.println(g.ajoutArc(3, 1, 3)); // TRUE, l'arc 3-1 vient d'�tre cr�e et a pour valeur 3
-        System.out.println(g.ajoutArc(2, 3, 3)); // TRUE, l'arc 2-3 vient d'�tre cr�e et a pour valeur 3
-        System.out.println(g.degreSortant(1)); // 2, qui est bien le dergr�s sortant de 1
-        System.out.println(g.degreSortant(3)); // 1, qui est bien le dergr�s sortant de 3
-        System.out.println(g.degre(1)); // 3, qui est bien le dergr�s de 1
-        System.out.println(g.degre(3)); // 3, qui est bien le dergr�s de 3
+        System.out.println(g.hasVertex(2)); // FALSE, en effet le sommet 2 n'existe pas.
+        System.out.println(g.addVertex(1)); // TRUE, le sommet 1 vient d'�tre cr�e
+        System.out.println(g.addVertex(2)); // TRUE, le sommet 2 vient d'�tre cr�e
+        System.out.println(g.addVertex(3)); // TRUE, le sommet 3 vient d'�tre cr�e
+        System.out.println(g.hasVertex(1)); // TRUE, en effet le sommet 1 existe
+        System.out.println(g.getVertexCount()); // 3, il y a bien 3 sommets dans le Graphe g
+        System.out.println(g.hasArc(1, 3)); // FALSE, en effet l'arc n'existe pas
+        System.out.println(g.getArcValue(1, 2)); // 0, 0 correspond � ALPHA_NOTDEF, l'arc n'existe pas
+        System.out.println(g.addArc(1, 3, 5)); // TRUE, l'arc 1-3 vient d'�tre cr�e et a pour valeur 5
+        System.out.println(g.addArc(1, 2, 3)); // TRUE, l'arc 1-2 vient d'�tre cr�e et a pour valeur 3
+        System.out.println(g.getArcValue(1, 2)); // 3, l'arc 1-3 a pour valeur 3
+        System.out.println(g.getArcValue(3, 1)); // 0, l'arc 3-1 n'existe pas !
+        System.out.println(g.addVertex(4)); // TRUE, le sommet 4 vient d'�tre cr�e
+        System.out.println(g.hasVertex(4)); // TRUE, en effet le sommet 4 existe
+        System.out.println(g.deleteVertex(4)); // TRUE, le sommet 4 est supprim�
+        System.out.println(g.hasVertex(4)); // FALSE, en effet le sommet 4 n'existe plus
+        System.out.println(g.getVertexInDegree(1)); // 0 qui est bien le degr�s entrant de 1
+        System.out.println(g.getVertexInDegree(2)); // 1 qui est bien le degr�s entrant de 2
+        System.out.println(g.addArc(3, 1, 3)); // TRUE, l'arc 3-1 vient d'�tre cr�e et a pour valeur 3
+        System.out.println(g.addArc(2, 3, 3)); // TRUE, l'arc 2-3 vient d'�tre cr�e et a pour valeur 3
+        System.out.println(g.getVertexOutDegree(1)); // 2, qui est bien le dergr�s sortant de 1
+        System.out.println(g.getVertexOutDegree(3)); // 1, qui est bien le dergr�s sortant de 3
+        System.out.println(g.getVertexDegree(1)); // 3, qui est bien le dergr�s de 1
+        System.out.println(g.getVertexDegree(3)); // 3, qui est bien le dergr�s de 3
         System.out.println(g.toString()); // 1 :23 ; 2 :3 ; 3 :1 (probl�me d'�criture s'il y a plusieurs sommets !!!)
-        System.out.println(g.estReflexif()); // FALSE OK
-        System.out.println(g.estAntiReflexif()); // TRUE OK
-        System.out.println(g.estSymetrique()); // FALSE OK
-        System.out.println(g.estAntiSymetrique()); // FALSE OK
-        System.out.println(g.estTransitif()); // FALSE OK
-        System.out.println(g.estAntiTransitif()); // FALSE OK
+        System.out.println(g.isReflexive()); // FALSE OK
+        System.out.println(g.isIrreflexive()); // TRUE OK
+        System.out.println(g.isSymmetric()); // FALSE OK
+        System.out.println(g.isAntisymmetric()); // FALSE OK
+        System.out.println(g.isTransitive()); // FALSE OK
+        System.out.println(g.isAntiTransitive()); // FALSE OK
     }
 
     // Fin MAIN

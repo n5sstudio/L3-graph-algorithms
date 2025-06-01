@@ -1,3 +1,5 @@
+package main.java.com.n5sstudio;
+
 public class Graph {
 
     private int[][] adjacencyMatrix;

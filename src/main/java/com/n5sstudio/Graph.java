@@ -162,14 +162,11 @@ public class Graph {
 
     public int[] getSuccessorList(int vertexIndex) {
         int[] list = new int[maximumNumberOfVertex];
-        int k = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
-                list[k] = j;
-                k++;
+                list[j] = j;
             } else {
-                list[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
-                k++;
+                list[j] = DEFAULT_NON_EXISTING_ARC_VALUE;
             }
         }
         return list;
@@ -177,14 +174,11 @@ public class Graph {
 
     public int[] getPredecessorList(int vertexIndex) {
         int[] list = new int[maximumNumberOfVertex];
-        int k = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {
-                list[k] = j;
-                k++;
+                list[j] = j;
             } else {
-                list[k] = DEFAULT_NON_EXISTING_ARC_VALUE;
-                k++;
+                list[j] = DEFAULT_NON_EXISTING_ARC_VALUE;
             }
         }
         return list;

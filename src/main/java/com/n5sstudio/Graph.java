@@ -2,6 +2,8 @@ package com.n5sstudio;
 
 import java.util.Arrays;
 
+import com.n5sstudio.Exception.NotImplementedException;
+
 public class Graph {
 
     private int[][] adjacencyMatrix;
@@ -256,14 +258,16 @@ public class Graph {
         }
     }
 
-    public void union(Graph g, Graph h) {
+    public void union(Graph g, Graph h) throws NotImplementedException {
+        throw new NotImplementedException();
     }
 
-    public void composition(Graph g, Graph h) {
+    public void composition(Graph g, Graph h) throws NotImplementedException {
+        throw new NotImplementedException();
     }
 
-    public void subgraph(Graph g, Graph h) {
-
+    public void subgraph(Graph g, Graph h) throws NotImplementedException {
+        throw new NotImplementedException();
     }
 
 }

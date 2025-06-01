@@ -2,7 +2,7 @@ package com.n5sstudio;
 
 import java.util.Arrays;
 
-import com.n5sstudio.Exception.NotImplementedException;
+import com.n5sstudio.exceptions.NotImplementedException;
 
 public class Graph {
 

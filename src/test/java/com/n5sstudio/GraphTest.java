@@ -134,8 +134,7 @@ class GraphTest {
     @Test
     void testGetSuccessorList() {
         int size = g.getMaximumNumberOfVertex();
-        int[] list = new int[size];
-        list = g.getSuccessorList(1);
+        int[] list = g.getSuccessorList(1);
 
         int[] attemptList = new int[size];
         for (int k = 0; k < size; k++) {
@@ -149,8 +148,7 @@ class GraphTest {
     @Test
     void testGetPredecessorList() {
         int size = g.getMaximumNumberOfVertex();
-        int[] list = new int[size];
-        list = g.getPredecessorList(2);
+        int[] list = g.getPredecessorList(2);
 
         int[] attemptList = new int[size];
         for (int k = 0; k < size; k++) {

@@ -1,11 +1,11 @@
-public class Graphe {
+public class Graph {
 
     private int[][] adjacencyMatrix;
     private int maximumNumberOfVertex;
     private boolean[] vertexExistanceArray;
     private static int UNDEFINED = 0;
     
-    public Graphe() {
+    public Graph() {
         maximumNumberOfVertex = 1000;
         adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
         vertexExistanceArray = new boolean[maximumNumberOfVertex];
@@ -17,7 +17,7 @@ public class Graphe {
         }
     }
     
-    public Graphe(int[][] adjacencyMatrix) {
+    public Graph(int[][] adjacencyMatrix) {
         maximumNumberOfVertex = 2 * adjacencyMatrix.length;
         adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
         vertexExistanceArray = new boolean[maximumNumberOfVertex];
@@ -38,7 +38,7 @@ public class Graphe {
     }
 
     // CONSTRUCTEUR GRAPHE ; PARAM. NB MAXI DE SOMMETS.
-    public Graphe(int maximumNumberOfVertex) {
+    public Graph(int maximumNumberOfVertex) {
         this.maximumNumberOfVertex = maximumNumberOfVertex;
         adjacencyMatrix = new int[maximumNumberOfVertex][maximumNumberOfVertex];
         vertexExistanceArray = new boolean[maximumNumberOfVertex];
@@ -51,7 +51,7 @@ public class Graphe {
     }
 
     // CONSTRUCTEUR GRAPHE CLONE ; PARAM. GRAPHE.
-    public Graphe(Graphe graph) {
+    public Graph(Graph graph) {
         maximumNumberOfVertex = graph.maximumNumberOfVertex;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             vertexExistanceArray[i] = graph.vertexExistanceArray[i];
@@ -315,7 +315,7 @@ public class Graphe {
     // On fait ici une s�rie de test permettant de v�rifier si le programme est
     // coh�rent
     public static void main(String[] args) {
-        Graphe g = new Graphe(10); // On cr�e le graphe g pouvant disposer de 10 sommets au maximum
+        Graph g = new Graph(10); // On cr�e le graphe g pouvant disposer de 10 sommets au maximum
         System.out.println(g.hasVertex(2)); // FALSE, en effet le sommet 2 n'existe pas.
         System.out.println(g.addVertex(1)); // TRUE, le sommet 1 vient d'�tre cr�e
         System.out.println(g.addVertex(2)); // TRUE, le sommet 2 vient d'�tre cr�e

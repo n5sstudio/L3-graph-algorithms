@@ -3,6 +3,8 @@ package com.n5sstudio;
 import java.util.Arrays;
 
 import com.n5sstudio.exceptions.NotImplementedException;
+import com.n5sstudio.exceptions.VertexAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 public class Graph {
 
@@ -38,7 +40,7 @@ public class Graph {
         initGraph(this.maximumNumberOfVertex);
     }
 
-    public Graph(Graph graph) {
+    public Graph(Graph graph) throws VertexOutboundLimitException {
         this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
         initGraph(this.maximumNumberOfVertex);
 
@@ -73,7 +75,10 @@ public class Graph {
         return this.maximumNumberOfVertex;
     }
 
-    public boolean hasVertex(int vertexIndex) {
+    public boolean hasVertex(int vertexIndex) throws VertexOutboundLimitException {
+        if (vertexIndex >= this.maximumNumberOfVertex) {
+            throw new VertexOutboundLimitException();
+        }
         return this.vertexExistanceArray[vertexIndex];
     }
 
@@ -86,16 +91,17 @@ public class Graph {
         return cpt;
     }
 
-    public boolean addVertex(int vertexIndex) {
-        if (vertexIndex < this.maximumNumberOfVertex && !hasVertex(vertexIndex)) {
-            this.vertexExistanceArray[vertexIndex] = true;
-            return true;
-        } else {
-            return false;
+    public void addVertex(int vertexIndex) throws VertexAlreadyExistsException, VertexOutboundLimitException {
+        if (vertexIndex >= this.maximumNumberOfVertex) {
+            throw new VertexOutboundLimitException();
         }
+        if (hasVertex(vertexIndex)) {
+            throw new VertexAlreadyExistsException();
+        }
+        this.vertexExistanceArray[vertexIndex] = true;
     }
 
-    public boolean deleteVertex(int vertexIndex) {
+    public boolean deleteVertex(int vertexIndex) throws VertexOutboundLimitException {
         if (!this.hasVertex(vertexIndex)) {
             return false;
         } else {
@@ -108,12 +114,12 @@ public class Graph {
         }
     }
 
-    public boolean hasArc(int originVertexIndex, int destinationVertexIndex) {
+    public boolean hasArc(int originVertexIndex, int destinationVertexIndex) throws VertexOutboundLimitException {
         return ((this.hasVertex(originVertexIndex) && this.hasVertex(destinationVertexIndex))
                 && this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] != DEFAULT_NON_EXISTING_ARC_VALUE);
     }
 
-    public int getArcValue(int originVertexIndex, int destinationVertexIndex) {
+    public int getArcValue(int originVertexIndex, int destinationVertexIndex) throws VertexOutboundLimitException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             return this.adjacencyMatrix[originVertexIndex][destinationVertexIndex];
         } else {
@@ -121,7 +127,7 @@ public class Graph {
         }
     }
 
-    public boolean addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) {
+    public boolean addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException {
         if (!this.hasArc(originVertexIndex, destinationVertexIndex)) {
             this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
             return true;
@@ -129,7 +135,7 @@ public class Graph {
         return false;
     }
 
-    public boolean deleteArc(int originVertexIndex, int destinationVertexIndex) {
+    public boolean deleteArc(int originVertexIndex, int destinationVertexIndex) throws VertexOutboundLimitException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = DEFAULT_NON_EXISTING_ARC_VALUE;
             return true;
@@ -160,7 +166,7 @@ public class Graph {
         return this.getVertexInDegree(vertexIndex) + this.getVertexOutDegree(vertexIndex);
     }
 
-    public int[] getSuccessorList(int vertexIndex) {
+    public int[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
         int[] list = new int[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
@@ -172,7 +178,7 @@ public class Graph {
         return list;
     }
 
-    public int[] getPredecessorList(int vertexIndex) {
+    public int[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
         int[] list = new int[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {
@@ -184,7 +190,7 @@ public class Graph {
         return list;
     }
 
-    public boolean isReflexive() {
+    public boolean isReflexive() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             if (this.hasVertex(i) && !this.hasArc(i, i)) {
                 return false;
@@ -193,7 +199,7 @@ public class Graph {
         return true;
     }
 
-    public boolean isIrreflexive() {
+    public boolean isIrreflexive() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             if (this.hasArc(i, i)) {
                 return false;
@@ -202,7 +208,7 @@ public class Graph {
         return true;
     }
 
-    public boolean isSymmetric() {
+    public boolean isSymmetric() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = i; j < this.maximumNumberOfVertex; j++) {
                 if (this.hasArc(i, j) && !this.hasArc(j, i)) {
@@ -213,7 +219,7 @@ public class Graph {
         return true;
     }
 
-    public boolean isAntisymmetric() {
+    public boolean isAntisymmetric() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = i + 1; j < this.maximumNumberOfVertex; j++) {
                 if (this.hasArc(i, j) && this.hasArc(j, i)) {
@@ -224,7 +230,7 @@ public class Graph {
         return true;
     }
 
-    public boolean isTransitive() {
+    public boolean isTransitive() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = 0; j < this.maximumNumberOfVertex; j++) {
                 for (int k = 0; k < this.maximumNumberOfVertex; k++) {
@@ -237,7 +243,7 @@ public class Graph {
         return true;
     }
 
-    public boolean isAntiTransitive() {
+    public boolean isAntiTransitive() throws VertexOutboundLimitException {
         for (int i = 0; i < this.maximumNumberOfVertex; i++) {
             for (int j = 0; j < this.maximumNumberOfVertex; j++) {
                 for (int k = 0; k < this.maximumNumberOfVertex; k++) {

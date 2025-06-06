@@ -20,11 +20,15 @@ class GraphTest {
     @BeforeEach
     void setup() {
         g = new Graph(5);
-        try{
+        try {
             g.addVertex(1);
             g.addVertex(2);
             g.addArc(1, 2, 5);
-        } catch (Exception e) {
+        } catch (VertexAlreadyExistsException e) {
+            // Vertex already exists, which is expected in this setup
+        } catch (VertexOutboundLimitException e) {
+            // Vertex outbound limit exceeded, which is not expected in this setup
+            throw new RuntimeException("Vertex outbound limit exceeded during setup", e);
         }
     }
 
@@ -76,7 +80,7 @@ class GraphTest {
     }
 
     @Test
-    void testHasVertexOutboundLimit() throws Exception {
+    void testHasVertexOutboundLimit() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -92,25 +96,19 @@ class GraphTest {
 
     @Test
     void testAddVertex() throws Exception {
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
+        g.addVertex(3);
         assertTrue(g.hasVertex(3));
         assertEquals(3, g.getVertexCount());
     }
 
     @Test
-    void testAddVertexThatAlreadyExists() throws Exception {
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
-        assertTrue(g.hasVertex(3));
+    void testAddVertexThatAlreadyExists() {
         assertThrows(VertexAlreadyExistsException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 g.addVertex(3);
+                assertTrue(g.hasVertex(3));
+                g.addVertex(3); 
             }
         });
     }
@@ -135,20 +133,14 @@ class GraphTest {
     @Test
     void testHasArc() throws Exception {
         assertTrue(g.hasArc(1, 2));
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
+        g.addVertex(3);
         assertFalse(g.hasArc(1, 3));
     }
 
     @Test
     void testGetArcValue() throws Exception {
         assertEquals(5, g.getArcValue(1, 2));
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
+        g.addVertex(3);
         assertEquals(g.getUndefiledValue(), g.getArcValue(1, 3));
         g.deleteVertex(2);
         assertEquals(g.getUndefiledValue(), g.getArcValue(1, 2));
@@ -227,35 +219,29 @@ class GraphTest {
     @Test
     void testIsSymmetric() throws Exception {
         assertFalse(g.isSymmetric());
-        g.addArc(2, 1, 5); 
+        g.addArc(2, 1, 5);
         assertTrue(g.isSymmetric());
     }
 
     @Test
     void testIsAntisymmetric() throws Exception {
         assertTrue(g.isAntisymmetric());
-        g.addArc(2, 1, 5); 
+        g.addArc(2, 1, 5);
         assertFalse(g.isAntisymmetric());
     }
 
     @Test
     void testTransitive() throws Exception {
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
+        g.addVertex(3);
         g.addArc(2, 3, 1);
         assertFalse(g.isTransitive());
-        g.addArc(1, 3, 1); 
+        g.addArc(1, 3, 1);
         assertTrue(g.isTransitive());
     }
 
     @Test
     void testAntiTransitive() throws Exception {
-        try {
-            g.addVertex(3);
-        } catch (Exception e) {
-        }
+        g.addVertex(3);
         g.addArc(2, 3, 1);
         assertTrue(g.isAntiTransitive());
         g.addArc(1, 3, 1);

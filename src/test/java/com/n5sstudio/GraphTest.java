@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import com.n5sstudio.exceptions.NotImplementedException;
+import com.n5sstudio.exceptions.VertexAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 class GraphTest {
 
@@ -18,9 +20,16 @@ class GraphTest {
     @BeforeEach
     void setup() {
         g = new Graph(5);
-        g.addVertex(1);
-        g.addVertex(2);
-        g.addArc(1, 2, 5);
+        try {
+            g.addVertex(1);
+            g.addVertex(2);
+            g.addArc(1, 2, 5);
+        } catch (VertexAlreadyExistsException e) {
+            // Vertex already exists, which is expected in this setup
+        } catch (VertexOutboundLimitException e) {
+            // Vertex outbound limit exceeded, which is not expected in this setup
+            throw new RuntimeException("Vertex outbound limit exceeded during setup", e);
+        }
     }
 
     @Test
@@ -31,7 +40,7 @@ class GraphTest {
     }
 
     @Test
-    void testGraphMatrix() {
+    void testGraphMatrix() throws Exception {
         int[][] matrix = new int[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -53,7 +62,7 @@ class GraphTest {
     }
 
     @Test
-    void testGraphCopy() {
+    void testGraphCopy() throws Exception {
         Graph h = new Graph(g);
         assertTrue(h.hasVertex(1));
         assertTrue(h.hasVertex(2));
@@ -65,9 +74,19 @@ class GraphTest {
     }
 
     @Test
-    void testHasVertex() {
+    void testHasVertex() throws Exception {
         assertTrue(g.hasVertex(1));
         assertFalse(g.hasVertex(3));
+    }
+
+    @Test
+    void testHasVertexOutboundLimit() {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.hasVertex(100);
+            }
+        });
     }
 
     @Test
@@ -76,28 +95,50 @@ class GraphTest {
     }
 
     @Test
-    void testAddVertex() {
+    void testAddVertex() throws Exception {
         g.addVertex(3);
         assertTrue(g.hasVertex(3));
         assertEquals(3, g.getVertexCount());
     }
 
     @Test
-    void testDeleteVertex() {
+    void testAddVertexThatAlreadyExists() {
+        assertThrows(VertexAlreadyExistsException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addVertex(3);
+                assertTrue(g.hasVertex(3));
+                g.addVertex(3); 
+            }
+        });
+    }
+
+    @Test
+    void testAddVertexOutboundLimits() {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addVertex(100);
+            }
+        });
+    }
+
+    @Test
+    void testDeleteVertex() throws Exception {
         g.deleteVertex(2);
         assertFalse(g.hasVertex(2));
         assertEquals(1, g.getVertexCount());
     }
 
     @Test
-    void testHasArc() {
+    void testHasArc() throws Exception {
         assertTrue(g.hasArc(1, 2));
         g.addVertex(3);
         assertFalse(g.hasArc(1, 3));
     }
 
     @Test
-    void testGetArcValue() {
+    void testGetArcValue() throws Exception {
         assertEquals(5, g.getArcValue(1, 2));
         g.addVertex(3);
         assertEquals(g.getUndefiledValue(), g.getArcValue(1, 3));
@@ -106,7 +147,7 @@ class GraphTest {
     }
 
     @Test
-    void testDeleteArc() {
+    void testDeleteArc() throws Exception {
         g.deleteArc(1, 2);
         assertEquals(g.getUndefiledValue(), g.getArcValue(1, 2));
         assertTrue(g.hasVertex(1));
@@ -132,7 +173,7 @@ class GraphTest {
     }
 
     @Test
-    void testGetSuccessorList() {
+    void testGetSuccessorList() throws Exception {
         int size = g.getMaximumNumberOfVertex();
         int[] list = g.getSuccessorList(1);
 
@@ -146,7 +187,7 @@ class GraphTest {
     }
 
     @Test
-    void testGetPredecessorList() {
+    void testGetPredecessorList() throws Exception {
         int size = g.getMaximumNumberOfVertex();
         int[] list = g.getPredecessorList(2);
 
@@ -160,7 +201,7 @@ class GraphTest {
     }
 
     @Test
-    void testIReflexive() {
+    void testIReflexive() throws Exception {
         assertFalse(g.isReflexive());
         g.addArc(1, 1, 1);
         assertFalse(g.isReflexive());
@@ -169,37 +210,37 @@ class GraphTest {
     }
 
     @Test
-    void testIsIrreflexive() {
+    void testIsIrreflexive() throws Exception {
         assertTrue(g.isIrreflexive());
         g.addArc(1, 1, 1);
         assertFalse(g.isIrreflexive());
     }
 
     @Test
-    void testIsSymmetric() {
+    void testIsSymmetric() throws Exception {
         assertFalse(g.isSymmetric());
-        g.addArc(2, 1, 5); 
+        g.addArc(2, 1, 5);
         assertTrue(g.isSymmetric());
     }
 
     @Test
-    void testIsAntisymmetric() {
+    void testIsAntisymmetric() throws Exception {
         assertTrue(g.isAntisymmetric());
-        g.addArc(2, 1, 5); 
+        g.addArc(2, 1, 5);
         assertFalse(g.isAntisymmetric());
     }
 
     @Test
-    void testTransitive() {
+    void testTransitive() throws Exception {
         g.addVertex(3);
         g.addArc(2, 3, 1);
         assertFalse(g.isTransitive());
-        g.addArc(1, 3, 1); 
+        g.addArc(1, 3, 1);
         assertTrue(g.isTransitive());
     }
 
     @Test
-    void testAntiTransitive() {
+    void testAntiTransitive() throws Exception {
         g.addVertex(3);
         g.addArc(2, 3, 1);
         assertTrue(g.isAntiTransitive());
@@ -208,7 +249,7 @@ class GraphTest {
     }
 
     @Test
-    void testTranspose() {
+    void testTranspose() throws Exception {
         assertTrue(g.hasArc(1, 2));
         g.transpose();
         assertFalse(g.hasArc(1, 2));

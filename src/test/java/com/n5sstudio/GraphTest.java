@@ -151,7 +151,7 @@ class GraphTest {
     }
 
     @Test
-    void testDeleteVertexOutboundLimits() throws Exception {
+    void testDeleteVertexOutboundLimits() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -183,7 +183,7 @@ class GraphTest {
 
 
     @Test
-    void testDeleteVertexOutboundNegativeValueLimits() throws Exception {
+    void testDeleteVertexOutboundNegativeValueLimits() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {

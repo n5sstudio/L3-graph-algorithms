@@ -1,3 +1,4 @@
+package com.n5sstudio;
 public class Pile {
     private int[] P;
     private int sommet;

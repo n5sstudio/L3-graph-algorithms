@@ -1,3 +1,4 @@
+package com.n5sstudio;
 /*
 On reprend la classe Graphe d�finit lors du TP01
 On reprends la classe Pile, donn�e lors du TP02 en y ajoutant 1 nouvelle fonction :

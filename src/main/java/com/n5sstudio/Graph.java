@@ -2,8 +2,10 @@ package com.n5sstudio;
 
 import java.util.Arrays;
 
+import com.n5sstudio.exceptions.ArcAlreadyExistsException;
 import com.n5sstudio.exceptions.NotImplementedException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 public class Graph {
@@ -40,7 +42,7 @@ public class Graph {
         initGraph(this.maximumNumberOfVertex);
     }
 
-    public Graph(Graph graph) throws VertexOutboundLimitException {
+    public Graph(Graph graph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
         initGraph(this.maximumNumberOfVertex);
 
@@ -76,7 +78,7 @@ public class Graph {
     }
 
     public boolean hasVertex(int vertexIndex) throws VertexOutboundLimitException {
-        if (vertexIndex >= this.maximumNumberOfVertex) {
+        if (vertexIndex >= this.maximumNumberOfVertex || vertexIndex < 0) {
             throw new VertexOutboundLimitException();
         }
         return this.vertexExistanceArray[vertexIndex];
@@ -127,12 +129,15 @@ public class Graph {
         }
     }
 
-    public boolean addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException {
-        if (!this.hasArc(originVertexIndex, destinationVertexIndex)) {
-            this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
-            return true;
+    public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+        if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
+            throw new ArcAlreadyExistsException();
         }
-        return false;
+        if (this.hasVertex(originVertexIndex) && this.hasVertex(destinationVertexIndex)) {
+            this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
+        } else {
+            throw new VertexDoesNotExistsException();
+        }
     }
 
     public boolean deleteArc(int originVertexIndex, int destinationVertexIndex) throws VertexOutboundLimitException {

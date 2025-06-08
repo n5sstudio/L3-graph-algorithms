@@ -9,8 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import com.n5sstudio.exceptions.ArcAlreadyExistsException;
 import com.n5sstudio.exceptions.NotImplementedException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 class GraphTest {
@@ -24,10 +26,8 @@ class GraphTest {
             g.addVertex(1);
             g.addVertex(2);
             g.addArc(1, 2, 5);
-        } catch (VertexAlreadyExistsException e) {
-            // Vertex already exists, which is expected in this setup
-        } catch (VertexOutboundLimitException e) {
-            // Vertex outbound limit exceeded, which is not expected in this setup
+        } catch (VertexAlreadyExistsException | ArcAlreadyExistsException | VertexOutboundLimitException | VertexDoesNotExistsException e) {
+            // Which is not expected in this setup
             throw new RuntimeException("Vertex outbound limit exceeded during setup", e);
         }
     }
@@ -90,6 +90,16 @@ class GraphTest {
     }
 
     @Test
+    void testHasVertexOutboundNegativeValueLimit() {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.hasVertex(-1);
+            }
+        });
+    }
+
+    @Test
     void testVertexCount() {
         assertEquals(2, g.getVertexCount());
     }
@@ -124,6 +134,33 @@ class GraphTest {
     }
 
     @Test
+    void testAddVertexOutboundNegativeValueLimit() {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addVertex(-1);
+            }
+        });
+    }
+
+    @Test
+    void testAddArc() throws Exception {
+        g.addVertex(3);
+        g.addArc(1, 3, 5);
+        assertTrue(g.hasArc(1, 3));
+    }
+
+    @Test
+    void testDeleteVertexOutboundLimits() throws Exception {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.deleteVertex(100);
+            }
+        });
+    }
+
+    @Test
     void testDeleteVertex() throws Exception {
         g.deleteVertex(2);
         assertFalse(g.hasVertex(2));
@@ -131,10 +168,58 @@ class GraphTest {
     }
 
     @Test
+    void testDeleteVertexThatDoesNotExists() throws Exception {
+        assertFalse(g.hasVertex(3));
+        g.deleteVertex(3);
+        assertFalse(g.hasVertex(3));
+    }
+
+    @Test
     void testHasArc() throws Exception {
         assertTrue(g.hasArc(1, 2));
         g.addVertex(3);
         assertFalse(g.hasArc(1, 3));
+    }
+
+
+    @Test
+    void testDeleteVertexOutboundNegativeValueLimits() throws Exception {
+        assertThrows(VertexOutboundLimitException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.deleteVertex(-1);
+            }
+        });
+    }
+
+    @Test
+    void testAddArcThatAlreadyExists() {
+        assertThrows(ArcAlreadyExistsException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addArc(1, 2, 5);
+            }
+        });
+    }
+
+    @Test
+    void testAddArcWithDestVertexDoesNotExists() {
+        assertThrows(VertexDoesNotExistsException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addArc(1, 3, 5);
+            }
+        });
+    }
+
+    @Test
+    void testAddArcWithOriginVertexDoesNotExists() {
+        assertThrows(VertexDoesNotExistsException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                g.addArc(3, 1, 5);
+            }
+        });
     }
 
     @Test
@@ -152,6 +237,12 @@ class GraphTest {
         assertEquals(g.getUndefiledValue(), g.getArcValue(1, 2));
         assertTrue(g.hasVertex(1));
         assertTrue(g.hasVertex(2));
+    }
+
+    @Test
+    void testDeleteArcThatDoesNotExist() throws Exception {
+        assertFalse(g.hasArc(2, 1));
+        assertFalse(g.deleteArc(2, 1));
     }
 
     @Test

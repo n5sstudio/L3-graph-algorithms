@@ -9,12 +9,6 @@ public class Stack {
     private int stackSize;
     private int stackMaximumSize;
 
-    public Stack() {
-        this.stackMaximumSize = 1000;
-        this.stackSize = -1;
-        this.stackContent = new int[stackMaximumSize];
-    }
-
     public Stack(int taille) {
         this.stackMaximumSize = taille;
         this.stackSize = -1;
@@ -26,7 +20,7 @@ public class Stack {
     }
 
     public boolean isFull() {
-        return (stackSize >= stackMaximumSize);
+        return (stackSize >= stackMaximumSize - 1);
     }
 
     public int getSize() {
@@ -57,7 +51,7 @@ public class Stack {
     public boolean contains(Stack pile, int z) throws EmptyStackException {
         Stack pileCopy = pile;
         boolean app = false;
-        while (!app) {
+        while (!pileCopy.isEmpty()) {
             int k = pileCopy.pop();
             if (k == z) {
                 app = true;

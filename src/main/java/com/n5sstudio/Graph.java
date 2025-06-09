@@ -77,6 +77,15 @@ public class Graph {
         return this.maximumNumberOfVertex;
     }
 
+    public int getNumberOfVertex() {
+        int nbVertices = 0;
+        for (int i = 0; i < maximumNumberOfVertex; i++) {
+            if (this.vertexExistanceArray[i])
+                nbVertices++;
+        }
+        return nbVertices;
+    }
+
     public boolean hasVertex(int vertexIndex) throws VertexOutboundLimitException {
         if (vertexIndex >= this.maximumNumberOfVertex || vertexIndex < 0) {
             throw new VertexOutboundLimitException();

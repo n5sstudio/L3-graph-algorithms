@@ -277,13 +277,13 @@ class GraphTest {
     @Test
     void testGetSuccessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        int[] list = graph.getSuccessorList(1);
+        boolean[] list = graph.getSuccessorList(1);
 
-        int[] attemptList = new int[size];
+        boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
-            attemptList[k] = graph.getUndefiledValue();
+            attemptList[k] = false;
         }
-        attemptList[2] = 2;
+        attemptList[2] = true;
         assertArrayEquals(attemptList, list);
 
     }
@@ -291,13 +291,13 @@ class GraphTest {
     @Test
     void testGetPredecessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        int[] list = graph.getPredecessorList(2);
+        boolean[] list = graph.getPredecessorList(2);
 
-        int[] attemptList = new int[size];
+        boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
-            attemptList[k] = graph.getUndefiledValue();
+            attemptList[k] = false;
         }
-        attemptList[1] = 1;
+        attemptList[1] = true;
         assertArrayEquals(attemptList, list);
 
     }

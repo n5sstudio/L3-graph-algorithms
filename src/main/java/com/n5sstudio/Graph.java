@@ -14,7 +14,7 @@ public class Graph {
     private int maximumNumberOfVertex;
     private boolean[] vertexExistanceArray;
     
-    private static final int DEFAULT_NON_EXISTING_ARC_VALUE = 0;
+    public static final int DEFAULT_NON_EXISTING_ARC_VALUE = 0;
     private static final int DEFAULT_MAXIMUM_NUMBER_OF_VERTEX = 1000;
 
     public Graph() {
@@ -180,25 +180,25 @@ public class Graph {
         return this.getVertexInDegree(vertexIndex) + this.getVertexOutDegree(vertexIndex);
     }
 
-    public int[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
-        int[] list = new int[maximumNumberOfVertex];
+    public boolean[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
+        boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
-                list[j] = j;
+                list[j] = true;
             } else {
-                list[j] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                list[j] = false;
             }
         }
         return list;
     }
 
-    public int[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
-        int[] list = new int[maximumNumberOfVertex];
+    public boolean[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
+        boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {
-                list[j] = j;
+                list[j] = true;
             } else {
-                list[j] = DEFAULT_NON_EXISTING_ARC_VALUE;
+                list[j] = false;
             }
         }
         return list;

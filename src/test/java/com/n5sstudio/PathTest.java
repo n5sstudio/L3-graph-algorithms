@@ -1,5 +1,7 @@
 package com.n5sstudio;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -32,13 +34,17 @@ class PathTest {
     }
 
     @Test
-    void tesCreatePathWithWrongOrigin() {
+    void tesCreatePathWithWrongOriginNegative() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 path = new Path(graph, -1, 1);
             }
         });
+    }
+
+    @Test
+    void tesCreatePathWithWrongOrigin() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -48,13 +54,17 @@ class PathTest {
     }
 
     @Test
-    void tesCreatePathWithWrongDestination() {
+    void tesCreatePathWithWrongDestinationNegative() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 path = new Path(graph, 1, -1);
             }
         });
+    }
+
+    @Test
+    void tesCreatePathWithWrongDestination() {
         assertThrows(VertexOutboundLimitException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -64,18 +74,31 @@ class PathTest {
     }
 
     @Test
-    void testBuildPathWithSameOriginAndDestination() throws VertexOutboundLimitException, VertexAlreadyExistsException {
+    void testBuildPathWithSameOriginAndDestination() throws VertexOutboundLimitException, VertexAlreadyExistsException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.path = new Path(this.graph, 1, 1);
         Graph computedPath = this.path.buildPath();
         assertEquals(1, computedPath.getNumberOfVertex());
     }
 
     @Test
-    void testBuildPath() throws VertexOutboundLimitException, VertexAlreadyExistsException {
-        // TODO: Implement the logic to build the path
-        this.path = new Path(this.graph, 1, 2);
+    void testBuildPathNoPath() throws VertexOutboundLimitException, VertexAlreadyExistsException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+        this.path = new Path(this.graph, 2, 1);
         Graph computedPath = this.path.buildPath();
         assertEquals(0, computedPath.getNumberOfVertex());
+    }
+
+    @Test
+    void testBuildPath() throws VertexOutboundLimitException, VertexAlreadyExistsException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+        this.graph.addVertex(3);
+        this.graph.addArc(2, 3, 5);
+        this.graph.addArc(3, 2, 5);
+        this.path = new Path(this.graph, 1, 3);
+        assertTrue(this.path.hasPath());
+        Graph computedPath = this.path.buildPath();
+        assertTrue(computedPath.hasArc(1, 2));
+        assertTrue(computedPath.hasArc(2, 3));
+        assertFalse(computedPath.hasArc(3, 2));
+        assertEquals(3, computedPath.getNumberOfVertex());
     }
 
 }

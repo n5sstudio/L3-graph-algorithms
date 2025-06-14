@@ -6,6 +6,7 @@ import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 public class Floyd {
+    
     private Graph graph;
     private int[][] previousVertexId;
     private static int ALPHA_NOTDEF = 1000;

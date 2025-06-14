@@ -5,6 +5,7 @@ import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
 public class Dijkstra {
+    
     private Graph graph;
     private int startingVertexId;
     private int[] minimumDistance;

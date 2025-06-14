@@ -17,8 +17,8 @@ public class Dijkstra {
     public Dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         startingVertexId = startingVertexId0;
         graph = new Graph(g0);
-        minimumDistance = new int[graph.getVertexCount()];
         visitedVertex = new boolean[graph.getVertexCount()];
+        initMinimumDistance();
     }
 
     public int getDistance(int i, int j) throws VertexOutboundLimitException {
@@ -29,7 +29,9 @@ public class Dijkstra {
         }
     }
 
-    public int[] initDistMin() throws VertexOutboundLimitException {
+    public int[] initMinimumDistance() throws VertexOutboundLimitException {
+        minimumDistance = new int[graph.getVertexCount()];
+        previousVertexId = new int[graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
             minimumDistance[i] = getDistance(startingVertexId, i);
             previousVertexId[i] = startingVertexId;

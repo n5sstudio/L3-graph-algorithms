@@ -1,119 +1,59 @@
 package com.n5sstudio;
 
+import com.n5sstudio.exceptions.ArcAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexDoesNotExistsException;
+import com.n5sstudio.exceptions.VertexOutboundLimitException;
+
 public class dijkstra {
-    private Graphe g;
-    private int depart;
-    private int[] D;
-    private int[] R;
-    private boolean[] S;
+    private Graph graph;
+    private int startingVertexId;
+    private int[] minimumDistance;
+    private int[] previousVertexId;
+    private boolean[] visitedVertex;
     private int INFINI = 1000000;
 
-    public dijkstra(int depart0, Graphe g0) {
-        depart = depart0;
-        g = new Graphe(g0);
-        D = new int[g.nbSommet()];
-        S = new boolean[g.nbSommet()];
+    public dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+        startingVertexId = startingVertexId0;
+        graph = new Graph(g0);
+        minimumDistance = new int[graph.getVertexCount()];
+        visitedVertex = new boolean[graph.getVertexCount()];
     }
 
-    public int distanceDansGraphe(int i, int j) { // fonction distance entre 2 sommets
-        if (g.existeArc(i, j) == true) {
-            return g.U[i][j]; // retourne la valeur de l_arc
+    public int getDistance(int i, int j) throws VertexOutboundLimitException {
+        if (graph.hasArc(i, j) == true) {
+            return graph.getArcValue(i, j);
         } else {
-            return INFINI; // retourne INFINI si l_arc n_existe pas
+            return INFINI;
         }
     }
 
-    public int[] initDistMin() {
-        for (int i = 0; i < g.nbSommet(); i++) {
-            D[i] = distanceDansGraphe(depart, i);
-            R[i] = depart;
+    public int[] initDistMin() throws VertexOutboundLimitException {
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            minimumDistance[i] = getDistance(startingVertexId, i);
+            previousVertexId[i] = startingVertexId;
         }
-        return D;
+        return minimumDistance;
     }
 
-    public void ajouter(int j) {
-        if (!S[j]) {
-            S[j] = true;
+    public void visitVertex(int j) {
+        if (!visitedVertex[j]) {
+            visitedVertex[j] = true;
         }
     }
 
-    public boolean appartient(int j) {
-        return S[j];
+    public boolean isVisited(int j) {
+        return visitedVertex[j];
     }
 
     public int choixSommet() {
         int min = INFINI;
         int k = 0;
-        for (int i = 0; i < g.nbSommet(); i++) {
-            if (D[i] < min && !appartient(i)) {
-                min = D[i];
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            if (minimumDistance[i] < min && !isVisited(i)) {
+                min = minimumDistance[i];
                 k = i;
             }
         }
         return k;
-    }
-
-    public void AfficheDist() {
-        // Affiche tout ce qui nous interesse !
-        System.out.println("Distance Minimale");
-        System.out.println();
-
-        for (int i = 0; i < g.nbSommet(); i++) {
-            System.out.print(D[i] + " ");
-        }
-
-        System.out.println();
-    }
-
-    public void AfficheRout() {
-        // Routage histoire de rire !
-        System.out.println("Routage");
-        System.out.println();
-
-        for (int i = 0; i < g.nbSommet(); i++) {
-            System.out.print(R[i] + " ");
-        }
-
-        System.out.println();
-    }
-
-    public static void main(java.lang.String[] args) {
-        int N = 11;
-        Graphe g = new Graphe(N);
-
-        for (int i = 0; i < N; i++) {
-            g.ajoutSommet(i);
-        }
-
-        g.ajoutArc(0, 1, 4);
-        g.ajoutArc(0, 6, 3);
-        g.ajoutArc(0, 3, 11);
-        g.ajoutArc(0, 9, 10);
-        g.ajoutArc(3, 9, 2);
-        g.ajoutArc(4, 3, 2);
-        g.ajoutArc(4, 7, 2);
-        g.ajoutArc(4, 8, 5);
-        g.ajoutArc(6, 4, 5);
-        g.ajoutArc(6, 10, 5);
-        g.ajoutArc(7, 10, 6);
-        g.ajoutArc(7, 4, 2);
-        g.ajoutArc(8, 5, 6);
-        g.ajoutArc(9, 2, 4);
-        g.ajoutArc(9, 8, 5);
-        g.ajoutArc(10, 7, 6);
-
-        // Affichage matrice
-        System.out.println("matrice d'adjacence :\n");
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                System.out.print(g.matriceU()[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-
-        dijkstra K = new dijkstra(0, g);
-        K.AfficheDist();
-
     }
 }

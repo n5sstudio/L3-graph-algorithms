@@ -77,7 +77,7 @@ public class Graph {
         return this.maximumNumberOfVertex;
     }
 
-    public int getNumberOfVertex() {
+    public int getVertexCount() {
         int nbVertices = 0;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (this.vertexExistanceArray[i])
@@ -91,15 +91,6 @@ public class Graph {
             throw new VertexOutboundLimitException();
         }
         return this.vertexExistanceArray[vertexIndex];
-    }
-
-    public int getVertexCount() {
-        int cpt = 0;
-        for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            if (this.vertexExistanceArray[i])
-                cpt++;
-        }
-        return cpt;
     }
 
     public void addVertex(int vertexIndex) throws VertexAlreadyExistsException, VertexOutboundLimitException {

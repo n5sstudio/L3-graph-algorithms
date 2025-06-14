@@ -81,13 +81,13 @@ class GraphTest {
 
     @Test
     void testGetNumberOfVertex() throws Exception {
-        assertEquals(2, graph.getNumberOfVertex());
+        assertEquals(2, graph.getVertexCount());
             graph.addVertex(3);
-        assertEquals(3, graph.getNumberOfVertex());
+        assertEquals(3, graph.getVertexCount());
         graph.deleteVertex(3);
             graph.deleteVertex(2);
             graph.deleteVertex(1);
-        assertEquals(0, graph.getNumberOfVertex());
+        assertEquals(0, graph.getVertexCount());
     }
 
     @Test
@@ -109,19 +109,6 @@ class GraphTest {
             }
         });
     }
-
-    @Test
-    void testVertexCount() {
-        assertEquals(2, graph.getVertexCount());
-    }
-
-    @Test
-    void testAddVertex() throws Exception {
-        graph.addVertex(3);
-        assertTrue(graph.hasVertex(3));
-        assertEquals(3, graph.getVertexCount());
-    }
-
     @Test
     void testAddVertexThatAlreadyExists() {
         assertThrows(VertexAlreadyExistsException.class, new Executable() {

@@ -77,14 +77,14 @@ class PathTest {
     void testBuildPathWithSameOriginAndDestination() throws VertexOutboundLimitException, VertexAlreadyExistsException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.path = new Path(this.graph, 1, 1);
         Graph computedPath = this.path.buildPath();
-        assertEquals(1, computedPath.getNumberOfVertex());
+        assertEquals(1, computedPath.getVertexCount());
     }
 
     @Test
     void testBuildPathNoPath() throws VertexOutboundLimitException, VertexAlreadyExistsException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.path = new Path(this.graph, 2, 1);
         Graph computedPath = this.path.buildPath();
-        assertEquals(0, computedPath.getNumberOfVertex());
+        assertEquals(0, computedPath.getVertexCount());
     }
 
     @Test
@@ -98,7 +98,7 @@ class PathTest {
         assertTrue(computedPath.hasArc(1, 2));
         assertTrue(computedPath.hasArc(2, 3));
         assertFalse(computedPath.hasArc(3, 2));
-        assertEquals(3, computedPath.getNumberOfVertex());
+        assertEquals(3, computedPath.getVertexCount());
     }
 
 }

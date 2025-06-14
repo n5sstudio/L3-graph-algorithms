@@ -37,7 +37,7 @@ public class Path {
             if (currentVertex == this.destinationVertexIdPath) {
                 return true;
             }
-            boolean[] successorList = referenceGraph.getSuccessorList(currentVertex);
+            boolean[] successorList = referenceGraph.getSuccessorBooleanList(currentVertex);
             for (int neighbor = 0; neighbor < referenceGraph.getMaximumNumberOfVertex(); neighbor++) {
                 if (successorList[neighbor]) {
                     visited[neighbor] = true;

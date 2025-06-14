@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
-import com.n5sstudio.exceptions.NotImplementedException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
@@ -81,13 +80,13 @@ class GraphTest {
 
     @Test
     void testGetNumberOfVertex() throws Exception {
-        assertEquals(2, graph.getNumberOfVertex());
+        assertEquals(2, graph.getVertexCount());
             graph.addVertex(3);
-        assertEquals(3, graph.getNumberOfVertex());
+        assertEquals(3, graph.getVertexCount());
         graph.deleteVertex(3);
             graph.deleteVertex(2);
             graph.deleteVertex(1);
-        assertEquals(0, graph.getNumberOfVertex());
+        assertEquals(0, graph.getVertexCount());
     }
 
     @Test
@@ -109,19 +108,6 @@ class GraphTest {
             }
         });
     }
-
-    @Test
-    void testVertexCount() {
-        assertEquals(2, graph.getVertexCount());
-    }
-
-    @Test
-    void testAddVertex() throws Exception {
-        graph.addVertex(3);
-        assertTrue(graph.hasVertex(3));
-        assertEquals(3, graph.getVertexCount());
-    }
-
     @Test
     void testAddVertexThatAlreadyExists() {
         assertThrows(VertexAlreadyExistsException.class, new Executable() {
@@ -277,7 +263,7 @@ class GraphTest {
     @Test
     void testGetSuccessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getSuccessorList(1);
+        boolean[] list = graph.getSuccessorBooleanList(1);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
@@ -291,7 +277,7 @@ class GraphTest {
     @Test
     void testGetPredecessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getPredecessorList(2);
+        boolean[] list = graph.getPredecessorBooleanList(2);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
@@ -356,36 +342,6 @@ class GraphTest {
         graph.transpose();
         assertFalse(graph.hasArc(1, 2));
         assertTrue(graph.hasArc(2, 1));
-    }
-
-    @Test
-    void testUnion() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.union(graph, graph);
-            }
-        });
-    }
-
-    @Test
-    void testComposition() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.composition(graph, graph);
-            }
-        });
-    }
-
-    @Test
-    void testSubGraph() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.subgraph(graph, graph);
-            }
-        });
     }
 
 }

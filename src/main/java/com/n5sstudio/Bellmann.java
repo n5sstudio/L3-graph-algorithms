@@ -10,8 +10,8 @@ public class Bellmann {
     private int startingVertexId;
     private int[] minimumDistance;
     private int[] previousVertexId;
-    private int INFINI = 1000000;
-    private boolean stable;
+
+    private static final int INFINI = 1000000;
 
     public Bellmann(int depart0, Graph referenceGraph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.startingVertexId = depart0;
@@ -28,27 +28,25 @@ public class Bellmann {
         return minimumDistance;
     }
 
-    public int getDistance(int i, int j) throws VertexOutboundLimitException, VertexOutboundLimitException {
-        if (graph.hasArc(i, j) == true) {
+    public int getDistance(int i, int j) throws VertexOutboundLimitException {
+        if (graph.hasArc(i, j)) {
             return graph.getArcValue(i, j);
         } else {
             return INFINI;
         }
     }
 
-    public void getShortestPath() throws VertexOutboundLimitException, VertexOutboundLimitException {
+    public void getShortestPath() throws VertexOutboundLimitException {
         initMinimumDistance();
         int k = 1;
-        stable = false;
+        boolean stable = false;
         int cout;
         while (!stable && k <= graph.getVertexCount()) {
-            int[] D_anc = new int[graph.getVertexCount()];
             k = k + 1;
             stable = true;
-            D_anc = minimumDistance;
             for (int i = 0; i < graph.getVertexCount(); i++) {
                 for (int j = 0; j < graph.getVertexCount(); j++) {
-                    cout = D_anc[j] + graph.getArcValue(j, i);
+                    cout = minimumDistance[j] + graph.getArcValue(j, i);
                     if (cout < minimumDistance[i]) {
                         minimumDistance[i] = cout;
                         previousVertexId[i] = j;

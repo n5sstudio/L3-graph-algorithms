@@ -11,24 +11,27 @@ public class Dijkstra {
     private int[] minimumDistance;
     private int[] previousVertexId;
     private boolean[] visitedVertex;
-    private int INFINI = 1000000;
+
+    private static final int INFINI = 1000000;
 
     public Dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         startingVertexId = startingVertexId0;
         graph = new Graph(g0);
-        minimumDistance = new int[graph.getVertexCount()];
         visitedVertex = new boolean[graph.getVertexCount()];
+        initMinimumDistance();
     }
 
     public int getDistance(int i, int j) throws VertexOutboundLimitException {
-        if (graph.hasArc(i, j) == true) {
+        if (graph.hasArc(i, j)) {
             return graph.getArcValue(i, j);
         } else {
             return INFINI;
         }
     }
 
-    public int[] initDistMin() throws VertexOutboundLimitException {
+    public int[] initMinimumDistance() throws VertexOutboundLimitException {
+        minimumDistance = new int[graph.getVertexCount()];
+        previousVertexId = new int[graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
             minimumDistance[i] = getDistance(startingVertexId, i);
             previousVertexId[i] = startingVertexId;

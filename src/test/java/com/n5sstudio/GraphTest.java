@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
-import com.n5sstudio.exceptions.NotImplementedException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;

@@ -317,20 +317,20 @@ public class Graph {
         }
     }
 
-    public Graph union(Graph g, Graph h) throws NotImplementedException, VertexOutboundLimitException,
+    public Graph union(Graph g) throws NotImplementedException, VertexOutboundLimitException,
             ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException, UnionGraphException {
-        Graph G4 = new Graph(g);
-        Graph nul = new Graph();
+        Graph computedGraph = new Graph(g);
+        Graph emptyGraph = new Graph();
         if (this.getVertexCount() == g.getVertexCount()) {
             for (int i = 0; i < this.getVertexCount(); i++) {
                 for (int j = 0; j < this.getVertexCount(); j++) {
                     if (getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
                         if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
-                            G4.updateArcValue(i, j, DEFAULT_NON_EXISTING_ARC_VALUE);
+                            computedGraph.updateArcValue(i, j, DEFAULT_NON_EXISTING_ARC_VALUE);
                         }
                     } else {
                         if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
-                            G4.updateArcValue(i, j, getArcValue(i, j));
+                            computedGraph.updateArcValue(i, j, getArcValue(i, j));
                         } else {
                             if (g.getArcValue(i, j) != getArcValue(i, j)) {
                                 throw new UnionGraphException();
@@ -339,43 +339,43 @@ public class Graph {
                     }
                 }
             }
-            return G4;
+            return computedGraph;
         } else {
-            return nul;
+            return emptyGraph;
         }
     }
 
-    public Graph composition(Graph g, Graph h) throws NotImplementedException, VertexAlreadyExistsException, VertexOutboundLimitException, ArcDoesNotExistException {
-        Graph G5 = new Graph();
+    public Graph composition(Graph g) throws NotImplementedException, VertexAlreadyExistsException, VertexOutboundLimitException, ArcDoesNotExistException {
+        Graph computedGraph = new Graph();
         for (int i = 0; i < getVertexCount(); i++) {
-            int[] lst_succ_i = getSuccessorList(i);
+            int[] successorListI = getSuccessorList(i);
             for (int j = 0; j < getVertexOutDegree(i); j++) {
                 for (int k = 0; k < g.getVertexCount(); k++) {
-                    int[] lst_pred_k = getPredecessorList(k);
+                    int[] predecessorListK = getPredecessorList(k);
                     for (int m = 0; m < g.getVertexInDegree(k); m++) {
-                        if ((lst_succ_i[j] == lst_pred_k[m])) {
-                            G5.addVertex(i);
-                            G5.addVertex(k);
-                            G5.updateArcValue(i, k, 1);
+                        if ((successorListI[j] == predecessorListK[m])) {
+                            computedGraph.addVertex(i);
+                            computedGraph.addVertex(k);
+                            computedGraph.updateArcValue(i, k, 1);
                         }
                     }
                 }
             }
         }
-        return G5;
+        return computedGraph;
     }
 
-    public void subgraph(int[] lst_sommet) throws NotImplementedException, VertexOutboundLimitException {
-        for (int i = 0; i < lst_sommet.length; i++) {
-            deleteVertex(lst_sommet[i]);
+    public void subgraph(int[] vertexList) throws NotImplementedException, VertexOutboundLimitException {
+        for (int i = 0; i < vertexList.length; i++) {
+            deleteVertex(vertexList[i]);
         }
-        for (int k = 0; k < lst_sommet.length; k++) {
+        for (int k = 0; k < vertexList.length; k++) {
             for (int j = 0; j < getVertexCount(); j++) {
-                if (hasArc(lst_sommet[k], j)) {
-                    deleteArc(lst_sommet[k], j);
+                if (hasArc(vertexList[k], j)) {
+                    deleteArc(vertexList[k], j);
                 }
-                if (hasArc(j, lst_sommet[k])) {
-                    deleteArc(j, lst_sommet[k]);
+                if (hasArc(j, vertexList[k])) {
+                    deleteArc(j, vertexList[k]);
                 }
             }
         }

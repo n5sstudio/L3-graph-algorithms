@@ -11,7 +11,8 @@ public class Dijkstra {
     private int[] minimumDistance;
     private int[] previousVertexId;
     private boolean[] visitedVertex;
-    private int INFINI = 1000000;
+
+    private static final int INFINI = 1000000;
 
     public Dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         startingVertexId = startingVertexId0;
@@ -21,7 +22,7 @@ public class Dijkstra {
     }
 
     public int getDistance(int i, int j) throws VertexOutboundLimitException {
-        if (graph.hasArc(i, j) == true) {
+        if (graph.hasArc(i, j)) {
             return graph.getArcValue(i, j);
         } else {
             return INFINI;

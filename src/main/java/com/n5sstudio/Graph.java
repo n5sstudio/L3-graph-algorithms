@@ -3,6 +3,7 @@ package com.n5sstudio;
 import java.util.Arrays;
 
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
+import com.n5sstudio.exceptions.ArcDoesNotExistException;
 import com.n5sstudio.exceptions.NotImplementedException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
@@ -129,6 +130,14 @@ public class Graph {
         }
     }
 
+    public void updateArcValue(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcDoesNotExistException {
+        if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
+            this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
+        } else {
+            throw new ArcDoesNotExistException();
+        }
+    }
+
     public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             throw new ArcAlreadyExistsException();
@@ -183,6 +192,22 @@ public class Graph {
         return list;
     }
 
+    public int[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
+        int outDegree = getVertexOutDegree(vertexIndex);
+        int[] list = new int[outDegree];
+        int index = 0;
+        for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+            if (this.hasArc(vertexIndex, j)) {
+                list[index] = j;
+                index++;
+            }
+            if (index >= outDegree) {
+                throw new VertexOutboundLimitException();
+            }
+        }
+        return list;
+    }
+
     public boolean[] getPredecessorBooleanList(int vertexIndex) throws VertexOutboundLimitException {
         boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
@@ -190,6 +215,22 @@ public class Graph {
                 list[j] = true;
             } else {
                 list[j] = false;
+            }
+        }
+        return list;
+    }
+
+    public int[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
+        int inDegree = getVertexInDegree(vertexIndex);
+        int[] list = new int[inDegree];
+        int index = 0;
+        for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+            if (this.hasArc(j, vertexIndex)) {
+                list[index] = j;
+                index++;
+            }
+            if (index >= inDegree) {
+                throw new VertexOutboundLimitException();
             }
         }
         return list;

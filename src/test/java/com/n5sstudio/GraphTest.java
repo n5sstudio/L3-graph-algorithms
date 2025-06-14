@@ -264,7 +264,7 @@ class GraphTest {
     @Test
     void testGetSuccessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getSuccessorList(1);
+        boolean[] list = graph.getSuccessorBooleanList(1);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
@@ -278,7 +278,7 @@ class GraphTest {
     @Test
     void testGetPredecessorList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getPredecessorList(2);
+        boolean[] list = graph.getPredecessorBooleanList(2);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {

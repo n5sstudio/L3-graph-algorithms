@@ -171,7 +171,7 @@ public class Graph {
         return this.getVertexInDegree(vertexIndex) + this.getVertexOutDegree(vertexIndex);
     }
 
-    public boolean[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
+    public boolean[] getSuccessorBooleanList(int vertexIndex) throws VertexOutboundLimitException {
         boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
@@ -183,7 +183,7 @@ public class Graph {
         return list;
     }
 
-    public boolean[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
+    public boolean[] getPredecessorBooleanList(int vertexIndex) throws VertexOutboundLimitException {
         boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {

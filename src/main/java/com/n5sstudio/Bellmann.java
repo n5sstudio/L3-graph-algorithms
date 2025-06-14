@@ -4,20 +4,19 @@ import com.n5sstudio.exceptions.ArcAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
-public class bellmann {
+public class Bellmann {
+    
     private Graph graph;
     private int startingVertexId;
     private int[] minimumDistance;
     private int[] previousVertexId;
-    private boolean[] S;
     private int INFINI = 1000000;
     private boolean stable;
 
-    public bellmann(int depart0, Graph referenceGraph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public Bellmann(int depart0, Graph referenceGraph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.startingVertexId = depart0;
         this.graph = new Graph(referenceGraph);
-        this.D = new int[graph.getVertexCount()];
-        this.S = new boolean[graph.getVertexCount()];
+        this.minimumDistance = new int[graph.getVertexCount()];
         this.previousVertexId = new int[graph.getVertexCount()];
     }
 

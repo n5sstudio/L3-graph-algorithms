@@ -5,12 +5,13 @@ import com.n5sstudio.exceptions.ArcDoesNotExistException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
-public class floyd {
+public class Floyd {
+    
     private Graph graph;
     private int[][] previousVertexId;
     private static int ALPHA_NOTDEF = 1000;
 
-    public floyd(Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public Floyd(Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         graph = new Graph(g0);
     }
 

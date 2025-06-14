@@ -4,7 +4,8 @@ import com.n5sstudio.exceptions.ArcAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
-public class dijkstra {
+public class Dijkstra {
+    
     private Graph graph;
     private int startingVertexId;
     private int[] minimumDistance;
@@ -12,7 +13,7 @@ public class dijkstra {
     private boolean[] visitedVertex;
     private int INFINI = 1000000;
 
-    public dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public Dijkstra(int startingVertexId0, Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         startingVertexId = startingVertexId0;
         graph = new Graph(g0);
         minimumDistance = new int[graph.getVertexCount()];

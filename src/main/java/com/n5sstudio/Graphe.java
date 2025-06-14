@@ -1,6 +1,11 @@
-/*package com.n5sstudio;
+package com.n5sstudio;
 
 public class Graphe {
+
+    @Override
+    public String toString() {
+        return "Graphe []";
+    }
 
     /* ---------------------------------------------------------------------------
     public Graphe union(Graphe g) {
@@ -66,7 +71,6 @@ public class Graphe {
                 }
             }
         }
-    }
-        */
+    }*/
     
 }

@@ -9,7 +9,7 @@ public class Floyd {
     
     private Graph graph;
     private int[][] previousVertexId;
-    
+
     private static final int ALPHA_NOTDEF = 1000;
 
     public Floyd(Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
@@ -28,28 +28,24 @@ public class Floyd {
         }
     }
 
-    public void plusCourtCheminWk() throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException {
+    public void shortestPath() throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException {
         Graph g2 = new Graph(graph);
-        int v1;
-        int v2;
-        int w;
+        int v1, v2;
         initRoutage();
         for (int x = 0; x < g2.getVertexCount(); x++) {
             for (int y = 0; y < g2.getVertexCount(); y++) {
-                v1 = g2.getArcValue(y, x);
-                if (v1 != ALPHA_NOTDEF) {
+                if (g2.hasArc(y, x)) {
+                    v1 = g2.getArcValue(y, x);
                     for (int z = 0; z < g2.getVertexCount(); z++) {
-                        v2 = g2.getArcValue(x, z);
-                        if (v2 != ALPHA_NOTDEF) {
-                            w = g2.getArcValue(y, z);
-                            if (w != ALPHA_NOTDEF) {
-                                if ((v1 + v2) < w) {
+                        if (g2.hasArc(x, z)) {
+                            v2 = g2.getArcValue(x, z);
+                            if (g2.hasArc(y, z) && (v1 + v2) < g2.getArcValue(y, z)) {
                                     g2.updateArcValue(y, z, v1 + v2);
                                     previousVertexId[y][z] = previousVertexId[x][z];
-                                } else {
-                                    g2.addArc(y, z, v1 + v2);
-                                    previousVertexId[y][z] = previousVertexId[x][z];
-                                }
+                            } 
+                            if (g2.hasArc(y, z) && (v1 + v2) >= g2.getArcValue(y, z)) {
+                                g2.addArc(y, z, v1 + v2);
+                                previousVertexId[y][z] = previousVertexId[x][z];
                             }
                         }
                     }

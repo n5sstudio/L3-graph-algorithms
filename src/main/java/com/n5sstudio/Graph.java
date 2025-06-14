@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
 import com.n5sstudio.exceptions.ArcDoesNotExistException;
 import com.n5sstudio.exceptions.NotImplementedException;
+import com.n5sstudio.exceptions.UnionGraphException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
@@ -14,7 +15,7 @@ public class Graph {
     private int[][] adjacencyMatrix;
     private int maximumNumberOfVertex;
     private boolean[] vertexExistanceArray;
-    
+
     public static final int DEFAULT_NON_EXISTING_ARC_VALUE = 0;
     private static final int DEFAULT_MAXIMUM_NUMBER_OF_VERTEX = 1000;
 
@@ -43,7 +44,8 @@ public class Graph {
         initGraph(this.maximumNumberOfVertex);
     }
 
-    public Graph(Graph graph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public Graph(Graph graph)
+            throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
         initGraph(this.maximumNumberOfVertex);
 
@@ -130,7 +132,8 @@ public class Graph {
         }
     }
 
-    public void updateArcValue(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcDoesNotExistException {
+    public void updateArcValue(int originVertexIndex, int destinationVertexIndex, int arcValue)
+            throws VertexOutboundLimitException, ArcDoesNotExistException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
         } else {
@@ -138,7 +141,8 @@ public class Graph {
         }
     }
 
-    public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue)
+            throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             throw new ArcAlreadyExistsException();
         }
@@ -313,16 +317,68 @@ public class Graph {
         }
     }
 
-    public void union(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public Graph union(Graph g, Graph h) throws NotImplementedException, VertexOutboundLimitException,
+            ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException, UnionGraphException {
+        Graph G4 = new Graph(g);
+        Graph nul = new Graph();
+        if (this.getVertexCount() == g.getVertexCount()) {
+            for (int i = 0; i < this.getVertexCount(); i++) {
+                for (int j = 0; j < this.getVertexCount(); j++) {
+                    if (getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
+                        if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
+                            G4.updateArcValue(i, j, DEFAULT_NON_EXISTING_ARC_VALUE);
+                        }
+                    } else {
+                        if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
+                            G4.updateArcValue(i, j, getArcValue(i, j));
+                        } else {
+                            if (g.getArcValue(i, j) != getArcValue(i, j)) {
+                                throw new UnionGraphException();
+                            }
+                        }
+                    }
+                }
+            }
+            return G4;
+        } else {
+            return nul;
+        }
     }
 
-    public void composition(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public Graph composition(Graph g, Graph h) throws NotImplementedException, VertexAlreadyExistsException, VertexOutboundLimitException, ArcDoesNotExistException {
+        Graph G5 = new Graph();
+        for (int i = 0; i < getVertexCount(); i++) {
+            int[] lst_succ_i = getSuccessorList(i);
+            for (int j = 0; j < getVertexOutDegree(i); j++) {
+                for (int k = 0; k < g.getVertexCount(); k++) {
+                    int[] lst_pred_k = getPredecessorList(k);
+                    for (int m = 0; m < g.getVertexInDegree(k); m++) {
+                        if ((lst_succ_i[j] == lst_pred_k[m])) {
+                            G5.addVertex(i);
+                            G5.addVertex(k);
+                            G5.updateArcValue(i, k, 1);
+                        }
+                    }
+                }
+            }
+        }
+        return G5;
     }
 
-    public void subgraph(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public void subgraph(int[] lst_sommet) throws NotImplementedException, VertexOutboundLimitException {
+        for (int i = 0; i < lst_sommet.length; i++) {
+            deleteVertex(lst_sommet[i]);
+        }
+        for (int k = 0; k < lst_sommet.length; k++) {
+            for (int j = 0; j < getVertexCount(); j++) {
+                if (hasArc(lst_sommet[k], j)) {
+                    deleteArc(lst_sommet[k], j);
+                }
+                if (hasArc(j, lst_sommet[k])) {
+                    deleteArc(j, lst_sommet[k]);
+                }
+            }
+        }
     }
 
 }

@@ -345,34 +345,4 @@ class GraphTest {
         assertTrue(graph.hasArc(2, 1));
     }
 
-    @Test
-    void testUnion() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.union(graph, graph);
-            }
-        });
-    }
-
-    @Test
-    void testComposition() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.composition(graph, graph);
-            }
-        });
-    }
-
-    @Test
-    void testSubGraph() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.subgraph(graph, graph);
-            }
-        });
-    }
-
 }

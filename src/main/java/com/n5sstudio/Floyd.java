@@ -9,7 +9,8 @@ public class Floyd {
     
     private Graph graph;
     private int[][] previousVertexId;
-    private static int ALPHA_NOTDEF = 1000;
+    
+    private static final int ALPHA_NOTDEF = 1000;
 
     public Floyd(Graph g0) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         graph = new Graph(g0);
@@ -27,7 +28,7 @@ public class Floyd {
         }
     }
 
-    public void PlusCourtCheminWk() throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException {
+    public void plusCourtCheminWk() throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException {
         Graph g2 = new Graph(graph);
         int v1;
         int v2;

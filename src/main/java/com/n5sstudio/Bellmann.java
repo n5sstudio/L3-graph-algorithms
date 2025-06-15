@@ -20,12 +20,15 @@ public class Bellmann {
         this.previousVertexId = new int[graph.getVertexCount()];
     }
 
-    public int[] initMinimumDistance() throws VertexOutboundLimitException {
+    private void initMinimumDistance() throws VertexOutboundLimitException {
         for (int i = 0; i < graph.getVertexCount(); i++) {
             minimumDistance[i] = getDistance(startingVertexId, i);
             previousVertexId[i] = startingVertexId;
         }
-        return minimumDistance;
+    }
+
+    public int getMinimumDistance(int vertexId) throws VertexOutboundLimitException {
+        return minimumDistance[vertexId];
     }
 
     public int getDistance(int i, int j) throws VertexOutboundLimitException {
@@ -38,19 +41,16 @@ public class Bellmann {
 
     public void getShortestPath() throws VertexOutboundLimitException {
         initMinimumDistance();
-        int k = 1;
-        boolean stable = false;
         int cout;
-        while (!stable && k <= graph.getVertexCount()) {
-            k = k + 1;
-            stable = true;
+        for (int k = 0; k < graph.getVertexCount(); k++) {
             for (int i = 0; i < graph.getVertexCount(); i++) {
                 for (int j = 0; j < graph.getVertexCount(); j++) {
-                    cout = minimumDistance[j] + graph.getArcValue(j, i);
-                    if (cout < minimumDistance[i]) {
-                        minimumDistance[i] = cout;
-                        previousVertexId[i] = j;
-                        stable = false;
+                    if (graph.hasArc(i, j)) {
+                        cout = minimumDistance[i] + graph.getArcValue(i, j);
+                        if (cout < minimumDistance[j]) {
+                            minimumDistance[j] = cout;
+                            previousVertexId[j] = i;
+                        }
                     }
                 }
             }

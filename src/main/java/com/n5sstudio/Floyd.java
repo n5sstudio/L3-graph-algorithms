@@ -8,53 +8,48 @@ import com.n5sstudio.exceptions.VertexOutboundLimitException;
 public class Floyd {
 
     private Graph graph;
-    private int[][] previousVertexId;
-
-    private static final int ALPHA_NOTDEF = 1000;
 
     public Floyd(Graph g0)
             throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         graph = new Graph(g0);
     }
 
-    public void initRoutage() throws VertexOutboundLimitException {
-        for (int x = 0; x < graph.getVertexCount(); x++) {
-            for (int y = 0; y < graph.getVertexCount(); y++) {
-                if (graph.hasArc(x, y)) {
-                    previousVertexId[x][y] = x;
+    private Graph shortestPath() throws VertexOutboundLimitException, ArcAlreadyExistsException,
+            VertexDoesNotExistsException, ArcDoesNotExistException {
+        Graph computedGraph = new Graph(graph);
+        for (int x = 0; x < computedGraph.getVertexCount(); x++) {
+            for (int y = 0; y < computedGraph.getVertexCount(); y++) {
+                for (int z = 0; z < computedGraph.getVertexCount(); z++) {
+                    addComputedArc(computedGraph, x, y, z);
+                }
+            }
+        }
+        return computedGraph;
+    }
+
+    private void addComputedArc(Graph computedGraph, int x, int y, int z) throws VertexOutboundLimitException, ArcDoesNotExistException {
+        int xy;
+        int yz;
+        int xz;
+        if (computedGraph.hasArc(x, y)) {
+            xy = computedGraph.getArcValue(x, y);
+            if (computedGraph.hasArc(y, z)) {
+                yz = computedGraph.getArcValue(y, z);
+                if (computedGraph.hasArc(x, z)) {
+                    xz = computedGraph.getArcValue(x, z);
+                    computedGraph.updateArcValue(x, z, Math.min(xy + yz, xz));
                 } else {
-                    previousVertexId[x][y] = ALPHA_NOTDEF;
+                    computedGraph.updateArcValue(y, z, xy + yz);
                 }
             }
         }
     }
 
-    public Graph shortestPath() throws VertexOutboundLimitException, ArcAlreadyExistsException,
-            VertexDoesNotExistsException, ArcDoesNotExistException {
-        Graph comptedGraph = new Graph(graph);
-        int v1;
-        int v2;
-        initRoutage();
-        for (int x = 0; x < comptedGraph.getVertexCount(); x++) {
-            for (int y = 0; y < comptedGraph.getVertexCount(); y++) {
-                if (comptedGraph.hasArc(y, x)) {
-                    v1 = comptedGraph.getArcValue(y, x);
-                    for (int z = 0; z < comptedGraph.getVertexCount(); z++) {
-                        if (comptedGraph.hasArc(x, z)) {
-                            v2 = comptedGraph.getArcValue(x, z);
-                            if (comptedGraph.hasArc(y, z) && (v1 + v2) < comptedGraph.getArcValue(y, z)) {
-                                comptedGraph.updateArcValue(y, z, v1 + v2);
-                                previousVertexId[y][z] = previousVertexId[x][z];
-                            }
-                            if (comptedGraph.hasArc(y, z) && (v1 + v2) >= comptedGraph.getArcValue(y, z)) {
-                                comptedGraph.addArc(y, z, v1 + v2);
-                                previousVertexId[y][z] = previousVertexId[x][z];
-                            }
-                        }
-                    }
-                }
-            }
+    public Integer getMinimumDistance(int i, int j) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException {
+        Graph computedGraph = this.shortestPath();
+        if (computedGraph.hasArc(i, j)) {
+            return computedGraph.getArcValue(i, j);
         }
-        return comptedGraph;
+        return Dijkstra.INFINI;
     }
 }

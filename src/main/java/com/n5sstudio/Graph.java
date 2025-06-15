@@ -364,9 +364,6 @@ public class Graph {
     }
 
     public void subgraph(int[] vertexList) throws NotImplementedException, VertexOutboundLimitException {
-        for (int i = 0; i < vertexList.length; i++) {
-            deleteVertex(vertexList[i]);
-        }
         for (int k = 0; k < vertexList.length; k++) {
             for (int j = 0; j < getVertexCount(); j++) {
                 if (hasArc(vertexList[k], j)) {
@@ -376,6 +373,9 @@ public class Graph {
                     deleteArc(j, vertexList[k]);
                 }
             }
+        }
+        for (int i = 0; i < vertexList.length; i++) {
+            deleteVertex(vertexList[i]);
         }
     }
 

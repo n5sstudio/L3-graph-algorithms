@@ -65,20 +65,4 @@ public class WelshPowell {
         }
     }
 
-    public int getNbColor() {
-        return nbColor;
-    }
-
-    public void afficheColor() {
-        Stack[] sommetColore = new Stack[nbColor + 1];
-        for (int i = 1; i <= nbColor; i++) {
-            sommetColore[i] = new Stack(g.getMaximumNumberOfVertex());
-            for (int j = 0; j < g.getMaximumNumberOfVertex(); j++) {
-                if (color[j] == i) {
-                    sommetColore[i].push(j);
-                }
-            }
-        }
-    }
-
 }

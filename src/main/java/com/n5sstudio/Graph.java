@@ -213,12 +213,9 @@ public class Graph {
         int[] list = new int[outDegree];
         int index = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
-            if (this.hasArc(vertexIndex, j)) {
+            if (this.hasArc(vertexIndex, j) && index < outDegree) {
                 list[index] = j;
                 index++;
-            }
-            if (index >= outDegree) {
-                throw new VertexOutboundLimitException();
             }
         }
         return list;
@@ -241,12 +238,9 @@ public class Graph {
         int[] list = new int[inDegree];
         int index = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
-            if (this.hasArc(j, vertexIndex)) {
+            if (this.hasArc(j, vertexIndex) && index < inDegree) {
                 list[index] = j;
                 index++;
-            }
-            if (index >= inDegree) {
-                throw new VertexOutboundLimitException();
             }
         }
         return list;
@@ -329,32 +323,24 @@ public class Graph {
         }
     }
 
-    public Graph union(Graph g) throws NotImplementedException, VertexOutboundLimitException,
-            ArcAlreadyExistsException, VertexDoesNotExistsException, ArcDoesNotExistException, UnionGraphException {
+    public Graph union(Graph g) throws UnionGraphException, VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         Graph computedGraph = new Graph(g);
-        Graph emptyGraph = new Graph();
-        if (this.getVertexCount() == g.getVertexCount()) {
-            for (int i = 0; i < this.getVertexCount(); i++) {
-                for (int j = 0; j < this.getVertexCount(); j++) {
-                    if (getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
-                        if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
-                            computedGraph.updateArcValue(i, j, DEFAULT_NON_EXISTING_ARC_VALUE);
-                        }
-                    } else {
-                        if (g.getArcValue(i, j) == DEFAULT_NON_EXISTING_ARC_VALUE) {
-                            computedGraph.updateArcValue(i, j, getArcValue(i, j));
-                        } else {
-                            if (g.getArcValue(i, j) != getArcValue(i, j)) {
-                                throw new UnionGraphException();
-                            }
-                        }
-                    }
+        for (int i = 0; i < this.getMaximumNumberOfVertex(); i++) {
+            if (this.hasVertex(i) && !g.hasVertex(i)) {
+                throw new UnionGraphException();
+            }
+        }
+        for (int i = 0; i < computedGraph.getMaximumNumberOfVertex(); i++) {
+            for (int j = 0; j < computedGraph.getMaximumNumberOfVertex(); j++) {
+                if ((this.hasArc(i, j) && g.hasArc(i, j))&& this.getArcValue(i, j) != g.getArcValue(i, j)) {
+                    throw new UnionGraphException();
+                }
+                if (!computedGraph.hasArc(i, j) && g.hasArc(i, j)) {
+                    computedGraph.addArc(i, j, g.getArcValue(i, j));
                 }
             }
-            return computedGraph;
-        } else {
-            return emptyGraph;
         }
+        return computedGraph;
     }
 
     public Graph composition(Graph g) throws NotImplementedException, VertexAlreadyExistsException, VertexOutboundLimitException, ArcDoesNotExistException {

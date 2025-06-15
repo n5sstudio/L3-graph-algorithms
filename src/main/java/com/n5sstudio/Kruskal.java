@@ -1,34 +1,38 @@
 package com.n5sstudio;
 
+import com.n5sstudio.exceptions.ArcAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexAlreadyExistsException;
+import com.n5sstudio.exceptions.VertexDoesNotExistsException;
+import com.n5sstudio.exceptions.VertexOutboundLimitException;
+
 public class Kruskal {
 
-    private static graphe A;
-    private arc[] lstAreteTriee;
-    private graphe grapheG;
+    private static Graph A;
+    private Arc[] lstAreteTriee;
+    private Graph GraphG;
     private int poids;
-    public Pile[] C;
+    public Stack[] C;
 
-    public Kruskal(int[][] mat) {
-        grapheG = new graphe(mat);
-        A = new graphe();
+    public Kruskal(int[][] mat) throws VertexAlreadyExistsException, VertexOutboundLimitException {
+        GraphG = new Graph(mat);
+        A = new Graph();
         for (int i = 0; i < 11; i++) {
-            if (grapheG.existesommet(i)) {
-                A.ajoutsommet(i);
+            if (GraphG.hasVertex(i)) {
+                A.addVertex(i);
             }
         }
         poids = 0;
-        lstAreteTriee = new arc[55];
-        C = new Pile[grapheG.nbsommet()];
+        lstAreteTriee = new Arc[55];
+        C = new Stack[GraphG.getMaximumNumberOfVertex()];
     }
 
-    /* Cr�er la liste des Arc */
-    private arc[] listeArc() {
-        arc[] l = new arc[55];
+    private Arc[] listeArc() throws VertexOutboundLimitException {
+        Arc[] l = new Arc[55];
         int k = 0;
         for (int i = 0; i < 11; i++) {
             for (int j = 0; j <= i; j++) {
-                if (grapheG.existearc(i, j)) {
-                    l[k] = new arc(i, j, grapheG.getvalarc(i, j));
+                if (GraphG.hasArc(i, j)) {
+                    l[k] = new Arc(i, j, GraphG.getArcValue(i, j));
                     k++;
                 }
             }
@@ -36,13 +40,12 @@ public class Kruskal {
         return l;
     }
 
-    /* Trie la liste d'Arc */
-    private arc[] trielstArete() {
-        arc[] l = listeArc();
+    private Arc[] trielstArete() throws VertexOutboundLimitException {
+        Arc[] l = listeArc();
         for (int i = 0; i < l.length; i++) {
             for (int j = 0; j < l.length - i - 1; j++) {
-                if (l[j].getval() > l[j + 1].getval()) {
-                    arc tmp = l[j];
+                if (l[j].getValue() > l[j + 1].getValue()) {
+                    Arc tmp = l[j];
                     l[j] = l[j + 1];
                     l[j + 1] = tmp;
                 }
@@ -52,35 +55,34 @@ public class Kruskal {
     }
 
     /* Returne l'arc d'indice i */
-    private arc aretesuivante(int i) {
+    private Arc aretesuivante(int i) {
         return lstAreteTriee[i];
     }
 
     /* Algo de Kruskal */
-  public void fKruskal() {
+  public void fKruskal() throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
     int indice = 0;
     lstAreteTriee = trielstArete();
     int k = 0;
     for (int x = 0; x < 11; x++) {
-      C[x] = new Pile();
-      C[x].empiler(x);
-
+      C[x] = new Stack(GraphG.getMaximumNumberOfVertex());
+      C[x].push(x);
     }
-    arc suiv = aretesuivante(indice);
-    while ( (k < grapheG.nbsommet() - 1) && getOriginVertexId()))) {
-        A.ajoutarc(suiv.getX(), suiv.getOriginVertexId(), suiv.getval());
-        for (int i = 0; i < grapheG.nbsommet() + 1; i++) {
-          if (C[suiv.getOriginVertexId < grapheG.nbsommet() + 1; i++) {
-          if (C[suiv.getY()].appartient(i)) {
-            C[suiv.getX()].empiler(i);
-          }
+    Arc suiv = aretesuivante(indice);
+    while (k < GraphG.getMaximumNumberOfVertex() - 1) {
+        A.addArc(suiv.getOrigin(), suiv.getDestination(), suiv.getValue());
+        for (int i = 0; i < GraphG.getMaximumNumberOfVertex() + 1; i++) {
+          if (C[suiv.getOrigin()].getSize() < GraphG.getMaximumNumberOfVertex() + 1) {
+            if (C[suiv.getDestination()].contains(C[suiv.getDestination()], i)) {
+                C[suiv.getOrigin()].push(i);
+            }
         }
         for (int z = 0; z < 11; z++) {
-          if (C[suiv.getX()].appartient(z)) {
-            for (int i = 0; i < grapheG.nbsommet() + 1; i++) {
-              if (C[suiv.getX()].appartient(i)) {
-                C[suiv.getX()] = new Pile(15);
-                C[z].empiler(i);
+          if (C[suiv.getOrigin()].contains(C[suiv.getOrigin()], z)) {
+            for (int w = 0; w < GraphG.getMaximumNumberOfVertex() + 1; w++) {
+              if (C[suiv.getOrigin()].contains(C[suiv.getOrigin()], w)) {
+                C[suiv.getOrigin()] = new Stack(15);
+                C[z].push(w);
               }
             }
           }
@@ -92,25 +94,23 @@ public class Kruskal {
     }
   }
 
-    /* Affichage de l'Arbre Couvrant */
-    public void getArbre() {
+    public void getArbre() throws VertexOutboundLimitException {
         for (int i = 0; i < 11; i++) {
-            if (A.existesommet(i)) {
+            if (A.hasVertex(i)) {
                 System.out.print(i + ": ");
-                for (int j = 0; j < A.degresortant(i); j++) {
-                    System.out.print(A.lst_succ(i)[j] + " ");
+                for (int j = 0; j < A.getVertexOutDegree(i); j++) {
+                    System.out.print(A.getSuccessorList(i)[j] + " ");
                 }
                 System.out.println(" ");
             }
         }
     }
 
-    /* Retourne le Poids de l'Arbre */
-    public int getPoids() {
+    public int getPoids() throws VertexOutboundLimitException {
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
-                if (A.existearc(i, j)) {
-                    poids = poids + grapheG.getvalarc(i, j);
+                if (A.hasArc(i, j)) {
+                    poids = poids + GraphG.getArcValue(i, j);
                 }
             }
         }

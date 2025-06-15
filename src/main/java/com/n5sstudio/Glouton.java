@@ -1,5 +1,7 @@
 package com.n5sstudio;
 
+import com.n5sstudio.exceptions.VertexOutboundLimitException;
+
 class Glouton {
     private int[] couleur;
     private int[][] dSommet;
@@ -8,18 +10,17 @@ class Glouton {
 
     public Glouton(int[][] mat) {
         g = new Graph(mat);
-        dSommet = new int[g.nbsommet()][6];
-        couleur = new int[g.nbsommet()];
+        dSommet = new int[g.getMaximumNumberOfVertex()][6];
+        couleur = new int[g.getMaximumNumberOfVertex()];
         nbCouleur = 0;
-        for (int i = 0; i < g.nbsommet(); i++) {
+        for (int i = 0; i < g.getMaximumNumberOfVertex(); i++) {
             dSommet[i][0] = i;
-            dSommet[i][1] = g.degresortant(i);
+            dSommet[i][1] = g.getVertexOutDegree(i);
         }
     }
-
-    /* On trie les sommets par nombres de successeurs d�croissant */
+    
     public void triDegreSommet() {
-        for (int x = 0; x < g.nbsommet(); x++) {
+        for (int x = 0; x < g.getMaximumNumberOfVertex(); x++) {
             int i = 0;
             while ((dSommet[i][2] >= dSommet[x][2]) && (i < x)) {
                 i++;
@@ -36,7 +37,6 @@ class Glouton {
         }
     }
 
-    /* Fonction Minimum */
     public int max(int i, int j) {
         if (i < j) {
             return j;
@@ -45,11 +45,10 @@ class Glouton {
         }
     }
 
-    /* Coloration */
-    public void coloration() {
-        for (int j = 0; j < g.nbsommet(); j++) {
+    public void coloration() throws VertexOutboundLimitException {
+        for (int j = 0; j < g.getMaximumNumberOfVertex(); j++) {
             for (int i = 0; i < dSommet[j][1]; i++) {
-                int tmp = g.lst_succ(dSommet[j][0])[i];
+                int tmp = g.getSuccessorList(dSommet[j][0])[i];
                 if (couleur[tmp] == couleur[dSommet[j][0]]) {
                     couleur[tmp] = couleur[tmp] + 1;
                     nbCouleur = max(nbCouleur, couleur[tmp]);
@@ -58,23 +57,19 @@ class Glouton {
         }
     }
 
-    /* Retourne le nombre de couleur */
     public int getNbCouleur() {
         return nbCouleur + 1;
     }
 
-    /* affichage de la coloration */
     public void afficheCouleur() {
         Stack[] sCouleur = new Stack[nbCouleur + 1];
         for (int i = 0; i < nbCouleur + 1; i++) {
-            sCouleur[i] = new Stack(g.nbsommet());
-            for (int j = 0; j < g.nbsommet(); j++) {
+            sCouleur[i] = new Stack(g.getMaximumNumberOfVertex());
+            for (int j = 0; j < g.getMaximumNumberOfVertex(); j++) {
                 if (couleur[j] == i) {
-                    sCouleur[i].empiler(j);
+                    sCouleur[i].push(j);
                 }
             }
-            System.out.println("Couleur " + (i + 1) + " - Sommets : ");
-            System.out.println(sCouleur[i].toString());
         }
     }
 }

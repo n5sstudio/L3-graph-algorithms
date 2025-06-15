@@ -13,9 +13,9 @@ public class Arc {
     }
 
     public Arc(Arc referenceArc) {
-        this.origin = referenceArc.origin;
-        this.destination = referenceArc.destination;
-        this.value = referenceArc.value;
+        this.origin = referenceArc.getOrigin();
+        this.destination = referenceArc.getDestination();
+        this.value = referenceArc.getValue();
     }
 
     public int getOrigin() {

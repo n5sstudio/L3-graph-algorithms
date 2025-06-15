@@ -10,7 +10,7 @@ import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
 
-public class BellmannTest {
+class BellmannTest {
 
     private Graph graph;
     private Bellmann bellmann;

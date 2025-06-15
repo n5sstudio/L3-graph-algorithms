@@ -27,7 +27,7 @@ public class Bellmann {
         }
     }
 
-    public int getMinimumDistance(int vertexId) throws VertexOutboundLimitException {
+    public int getMinimumDistance(int vertexId) {
         return minimumDistance[vertexId];
     }
 

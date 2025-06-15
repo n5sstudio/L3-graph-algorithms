@@ -9,7 +9,6 @@ public class Dijkstra {
     private Graph graph;
     private int startingVertexId;
     private int[] minimumDistance;
-    private int[] previousVertexId;
     private boolean[] visitedVertex;
 
     private static final int INFINI = 1000000;
@@ -31,10 +30,8 @@ public class Dijkstra {
 
     public int[] initMinimumDistance() throws VertexOutboundLimitException {
         minimumDistance = new int[graph.getVertexCount()];
-        previousVertexId = new int[graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
             minimumDistance[i] = getDistance(startingVertexId, i);
-            previousVertexId[i] = startingVertexId;
         }
         return minimumDistance;
     }

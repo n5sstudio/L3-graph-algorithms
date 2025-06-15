@@ -1,15 +1,12 @@
-/*
- Tournier Nicolas L3 - MI
- TP 4 : Coloration d'un Graphe.
- */
+package com.n5sstudio;
 
-public class Welsh_Powell {
+public class WelshPowell {
   private int[] color;
   private int[][] dSommet;
   private graphe g;
   private int nbColor;
 
-  public Welsh_Powell(int[][] mat) {
+  public WelshPowell(int[][] mat) {
     g = new graphe(mat);
     dSommet = new int[g.nbsommet()][2];
     color = new int[g.nbsommet()];
@@ -20,7 +17,7 @@ public class Welsh_Powell {
     }
   }
 
-  /* On trie les sommets par nombres de successeurs décroissant*/
+  /* On trie les sommets par nombres de successeurs dï¿½croissant*/
   public void triDegreSommet() {
     for (int x = 1; x < g.nbsommet(); x++) {
       int k = 0;
@@ -39,7 +36,7 @@ public class Welsh_Powell {
     }
   }
 
-  /* On vérifie si l'on peut mettre cette couleur au sommet s */
+  /* On vï¿½rifie si l'on peut mettre cette couleur au sommet s */
   public boolean possibleCouleur(int s, int c) {
     boolean ok = true;
     int i = 0;
@@ -210,8 +207,8 @@ public class Welsh_Powell {
     System.out.println("Representation du Graphe : ");
     System.out.println(mapFr.toString());
 
-    // Exécution
-    Welsh_Powell france = new Welsh_Powell(mat);
+    // Exï¿½cution
+    WelshPowell france = new WelshPowell(mat);
     france.coloration();
     System.out.println("On a : " + france.getNbColor() +
                        " couleurs differentes");
@@ -221,7 +218,7 @@ public class Welsh_Powell {
     System.out.println();
   }
 
-  /*Correspondance Régions - Sommets.
+  /*Correspondance Rï¿½gions - Sommets.
     Nord -> 0
     Picardie -> 1
     Haute normandie -> 2
@@ -233,14 +230,14 @@ public class Welsh_Powell {
     Pays de la loire -> 8
     Centre -> 9
     Bourgogne -> 10
-    Franche comté -> 11
+    Franche comtï¿½ -> 11
     Alsace -> 12
     Poitou charente -> 13
     Limousin -> 14
     Auvergne -> 15
     Rhone alpes -> 16
     Corse -> 17
-    Aquitaineé -> 18
+    Aquitaineï¿½ -> 18
     Midi pyrennee -> 19
     Languedoc roussillon -> 20
     P.A.C.A -> 21*/

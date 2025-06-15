@@ -1,11 +1,13 @@
-public class prim {
+package com.n5sstudio;
+
+public class Prim {
 
   private int[][] lstAreteTriee;
   private graphe g;
   private int poids;
   private int N;
 
-  public prim(int[][] mat) {
+  public Prim(int[][] mat) {
     int t = 0;
     g = new graphe(mat);
     N = mat.length;
@@ -42,7 +44,7 @@ public class prim {
     }
   }
 
-  /* Choix de l'arête à valeur minimale */
+  /* Choix de l'arï¿½te ï¿½ valeur minimale */
   private int[] choixAreteMin(graphe A) {
     int i = -1;
     boolean test = true;
@@ -123,7 +125,7 @@ public class prim {
     };
 
     graphe g = new graphe(mat);
-    prim P = new prim(mat);
+    Prim P = new Prim(mat);
     System.out.println("Representation de l'arbre : ");
     System.out.println(P.fPrim());
     System.out.println();

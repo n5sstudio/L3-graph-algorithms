@@ -49,7 +49,7 @@ public class Dijkstra {
         return visitedVertex[j];
     }
 
-    public int choixSommet() {
+    public int vertexChoice() {
         int min = INFINI;
         int k = 0;
         for (int i = 0; i < graph.getVertexCount(); i++) {

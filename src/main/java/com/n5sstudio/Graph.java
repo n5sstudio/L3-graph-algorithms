@@ -162,6 +162,18 @@ public class Graph {
         }
     }
 
+    public int getWeight() throws VertexOutboundLimitException {
+        int weight = 0;
+        for (int i = 0; i < this.maximumNumberOfVertex; i++) {
+            for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+                if (this.hasArc(i, j)) {
+                    weight += this.getArcValue(i, j);
+                }
+            }
+        }
+        return weight;
+    }
+
     public int getVertexOutDegree(int vertexIndex) {
         int outDegree = 0;
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {

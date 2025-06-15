@@ -3,7 +3,9 @@ package com.n5sstudio;
 import java.util.Arrays;
 
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
+import com.n5sstudio.exceptions.ArcDoesNotExistException;
 import com.n5sstudio.exceptions.NotImplementedException;
+import com.n5sstudio.exceptions.UnionGraphException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
@@ -13,7 +15,7 @@ public class Graph {
     private int[][] adjacencyMatrix;
     private int maximumNumberOfVertex;
     private boolean[] vertexExistanceArray;
-    
+
     public static final int DEFAULT_NON_EXISTING_ARC_VALUE = 0;
     private static final int DEFAULT_MAXIMUM_NUMBER_OF_VERTEX = 1000;
 
@@ -42,7 +44,8 @@ public class Graph {
         initGraph(this.maximumNumberOfVertex);
     }
 
-    public Graph(Graph graph) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public Graph(Graph graph)
+            throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         this.maximumNumberOfVertex = graph.maximumNumberOfVertex;
         initGraph(this.maximumNumberOfVertex);
 
@@ -77,7 +80,7 @@ public class Graph {
         return this.maximumNumberOfVertex;
     }
 
-    public int getNumberOfVertex() {
+    public int getVertexCount() {
         int nbVertices = 0;
         for (int i = 0; i < maximumNumberOfVertex; i++) {
             if (this.vertexExistanceArray[i])
@@ -91,15 +94,6 @@ public class Graph {
             throw new VertexOutboundLimitException();
         }
         return this.vertexExistanceArray[vertexIndex];
-    }
-
-    public int getVertexCount() {
-        int cpt = 0;
-        for (int i = 0; i < this.maximumNumberOfVertex; i++) {
-            if (this.vertexExistanceArray[i])
-                cpt++;
-        }
-        return cpt;
     }
 
     public void addVertex(int vertexIndex) throws VertexAlreadyExistsException, VertexOutboundLimitException {
@@ -138,7 +132,17 @@ public class Graph {
         }
     }
 
-    public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue) throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+    public void updateArcValue(int originVertexIndex, int destinationVertexIndex, int arcValue)
+            throws VertexOutboundLimitException, ArcDoesNotExistException {
+        if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
+            this.adjacencyMatrix[originVertexIndex][destinationVertexIndex] = arcValue;
+        } else {
+            throw new ArcDoesNotExistException();
+        }
+    }
+
+    public void addArc(int originVertexIndex, int destinationVertexIndex, int arcValue)
+            throws VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
         if (this.hasArc(originVertexIndex, destinationVertexIndex)) {
             throw new ArcAlreadyExistsException();
         }
@@ -156,6 +160,18 @@ public class Graph {
         } else {
             return false;
         }
+    }
+
+    public int getWeight() throws VertexOutboundLimitException {
+        int weight = 0;
+        for (int i = 0; i < this.maximumNumberOfVertex; i++) {
+            for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+                if (this.hasArc(i, j)) {
+                    weight += this.getArcValue(i, j);
+                }
+            }
+        }
+        return weight;
     }
 
     public int getVertexOutDegree(int vertexIndex) {
@@ -180,7 +196,7 @@ public class Graph {
         return this.getVertexInDegree(vertexIndex) + this.getVertexOutDegree(vertexIndex);
     }
 
-    public boolean[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
+    public boolean[] getSuccessorBooleanList(int vertexIndex) throws VertexOutboundLimitException {
         boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(vertexIndex, j)) {
@@ -192,13 +208,39 @@ public class Graph {
         return list;
     }
 
-    public boolean[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
+    public int[] getSuccessorList(int vertexIndex) throws VertexOutboundLimitException {
+        int outDegree = getVertexOutDegree(vertexIndex);
+        int[] list = new int[outDegree];
+        int index = 0;
+        for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+            if (this.hasArc(vertexIndex, j) && index < outDegree) {
+                list[index] = j;
+                index++;
+            }
+        }
+        return list;
+    }
+
+    public boolean[] getPredecessorBooleanList(int vertexIndex) throws VertexOutboundLimitException {
         boolean[] list = new boolean[maximumNumberOfVertex];
         for (int j = 0; j < this.maximumNumberOfVertex; j++) {
             if (this.hasArc(j, vertexIndex)) {
                 list[j] = true;
             } else {
                 list[j] = false;
+            }
+        }
+        return list;
+    }
+
+    public int[] getPredecessorList(int vertexIndex) throws VertexOutboundLimitException {
+        int inDegree = getVertexInDegree(vertexIndex);
+        int[] list = new int[inDegree];
+        int index = 0;
+        for (int j = 0; j < this.maximumNumberOfVertex; j++) {
+            if (this.hasArc(j, vertexIndex) && index < inDegree) {
+                list[index] = j;
+                index++;
             }
         }
         return list;
@@ -281,16 +323,60 @@ public class Graph {
         }
     }
 
-    public void union(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public Graph union(Graph g) throws UnionGraphException, VertexOutboundLimitException, ArcAlreadyExistsException, VertexDoesNotExistsException {
+        Graph computedGraph = new Graph(g);
+        for (int i = 0; i < this.getMaximumNumberOfVertex(); i++) {
+            if (this.hasVertex(i) && !g.hasVertex(i)) {
+                throw new UnionGraphException();
+            }
+        }
+        for (int i = 0; i < computedGraph.getMaximumNumberOfVertex(); i++) {
+            for (int j = 0; j < computedGraph.getMaximumNumberOfVertex(); j++) {
+                if ((this.hasArc(i, j) && g.hasArc(i, j))&& this.getArcValue(i, j) != g.getArcValue(i, j)) {
+                    throw new UnionGraphException();
+                }
+                if (!computedGraph.hasArc(i, j) && g.hasArc(i, j)) {
+                    computedGraph.addArc(i, j, g.getArcValue(i, j));
+                }
+            }
+        }
+        return computedGraph;
     }
 
-    public void composition(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public Graph composition(Graph g) throws NotImplementedException, VertexAlreadyExistsException, VertexOutboundLimitException, ArcDoesNotExistException {
+        Graph computedGraph = new Graph();
+        for (int i = 0; i < getVertexCount(); i++) {
+            int[] successorListI = getSuccessorList(i);
+            for (int j = 0; j < getVertexOutDegree(i); j++) {
+                for (int k = 0; k < g.getVertexCount(); k++) {
+                    int[] predecessorListK = getPredecessorList(k);
+                    for (int m = 0; m < g.getVertexInDegree(k); m++) {
+                        if ((successorListI[j] == predecessorListK[m])) {
+                            computedGraph.addVertex(i);
+                            computedGraph.addVertex(k);
+                            computedGraph.updateArcValue(i, k, 1);
+                        }
+                    }
+                }
+            }
+        }
+        return computedGraph;
     }
 
-    public void subgraph(Graph g, Graph h) throws NotImplementedException {
-        throw new NotImplementedException();
+    public void subgraph(int[] vertexList) throws NotImplementedException, VertexOutboundLimitException {
+        for (int i = 0; i < vertexList.length; i++) {
+            deleteVertex(vertexList[i]);
+        }
+        for (int k = 0; k < vertexList.length; k++) {
+            for (int j = 0; j < getVertexCount(); j++) {
+                if (hasArc(vertexList[k], j)) {
+                    deleteArc(vertexList[k], j);
+                }
+                if (hasArc(j, vertexList[k])) {
+                    deleteArc(j, vertexList[k]);
+                }
+            }
+        }
     }
 
 }

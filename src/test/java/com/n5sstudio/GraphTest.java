@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import com.n5sstudio.exceptions.ArcAlreadyExistsException;
-import com.n5sstudio.exceptions.NotImplementedException;
+import com.n5sstudio.exceptions.ArcDoesNotExistException;
+import com.n5sstudio.exceptions.UnionGraphException;
 import com.n5sstudio.exceptions.VertexAlreadyExistsException;
 import com.n5sstudio.exceptions.VertexDoesNotExistsException;
 import com.n5sstudio.exceptions.VertexOutboundLimitException;
@@ -81,13 +82,13 @@ class GraphTest {
 
     @Test
     void testGetNumberOfVertex() throws Exception {
-        assertEquals(2, graph.getNumberOfVertex());
+        assertEquals(2, graph.getVertexCount());
             graph.addVertex(3);
-        assertEquals(3, graph.getNumberOfVertex());
+        assertEquals(3, graph.getVertexCount());
         graph.deleteVertex(3);
             graph.deleteVertex(2);
             graph.deleteVertex(1);
-        assertEquals(0, graph.getNumberOfVertex());
+        assertEquals(0, graph.getVertexCount());
     }
 
     @Test
@@ -109,19 +110,6 @@ class GraphTest {
             }
         });
     }
-
-    @Test
-    void testVertexCount() {
-        assertEquals(2, graph.getVertexCount());
-    }
-
-    @Test
-    void testAddVertex() throws Exception {
-        graph.addVertex(3);
-        assertTrue(graph.hasVertex(3));
-        assertEquals(3, graph.getVertexCount());
-    }
-
     @Test
     void testAddVertexThatAlreadyExists() {
         assertThrows(VertexAlreadyExistsException.class, new Executable() {
@@ -190,6 +178,22 @@ class GraphTest {
         assertTrue(graph.hasArc(1, 2));
         graph.addVertex(3);
         assertFalse(graph.hasArc(1, 3));
+    }
+
+    @Test
+    void testUpdateArcValue() throws Exception {
+        graph.updateArcValue(1, 2, 10);
+        assertEquals(10, graph.getArcValue(1, 2));
+    }
+
+    @Test
+    void testUpdateNonExistingArcValue() {
+        assertThrows(ArcDoesNotExistException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                graph.updateArcValue(1, 3, 10);
+            }
+        });
     }
 
 
@@ -275,9 +279,9 @@ class GraphTest {
     }
 
     @Test
-    void testGetSuccessorList() throws Exception {
+    void testGetSuccessorBooleanList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getSuccessorList(1);
+        boolean[] list = graph.getSuccessorBooleanList(1);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
@@ -289,9 +293,9 @@ class GraphTest {
     }
 
     @Test
-    void testGetPredecessorList() throws Exception {
+    void testGetPredecessorBooleanList() throws Exception {
         int size = graph.getMaximumNumberOfVertex();
-        boolean[] list = graph.getPredecessorList(2);
+        boolean[] list = graph.getPredecessorBooleanList(2);
 
         boolean[] attemptList = new boolean[size];
         for (int k = 0; k < size; k++) {
@@ -303,7 +307,24 @@ class GraphTest {
     }
 
     @Test
-    void testIReflexive() throws Exception {
+    void testGetSuccessorList() throws Exception {
+        assertEquals(1, graph.getVertexOutDegree(1));
+        int[] list = graph.getSuccessorList(1);
+        int[] attemptList = new int[graph.getVertexOutDegree(1)];
+        attemptList[0] = 2;
+        assertArrayEquals(attemptList, list);
+    }
+
+    @Test
+    void testGetPredecessorList() throws Exception {
+        int[] list = graph.getPredecessorList(2);
+        int[] attemptList = new int[graph.getVertexInDegree(2)];
+        attemptList[0] = 1;
+        assertArrayEquals(attemptList, list);
+    }
+
+    @Test
+    void testIsReflexive() throws Exception {
         assertFalse(graph.isReflexive());
         graph.addArc(1, 1, 1);
         assertFalse(graph.isReflexive());
@@ -359,31 +380,41 @@ class GraphTest {
     }
 
     @Test
-    void testUnion() {
-        assertThrows(NotImplementedException.class, new Executable() {
+    void testUnion() throws Exception {
+        Graph h = new Graph(5);
+        h.addVertex(1);
+        h.addVertex(2);
+        h.addArc(1, 2, 5);
+        h.addArc(2, 1, 3);
+        Graph union = graph.union(h);
+        assertTrue(union.hasArc(1, 2));
+        assertEquals(5, union.getArcValue(1, 2));
+        assertTrue(union.hasArc(2, 1));
+        assertEquals(3, union.getArcValue(2, 1));
+    }
+
+    @Test
+    void testUnionImposible() {
+        assertThrows(UnionGraphException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                graph.union(graph, graph);
+                Graph h = new Graph(5);
+                h.addVertex(1);
+                graph.union(h);
             }
         });
     }
 
     @Test
-    void testComposition() {
-        assertThrows(NotImplementedException.class, new Executable() {
+    void testUnionIncompatible() {
+        assertThrows(UnionGraphException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                graph.composition(graph, graph);
-            }
-        });
-    }
-
-    @Test
-    void testSubGraph() {
-        assertThrows(NotImplementedException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                graph.subgraph(graph, graph);
+                Graph h = new Graph(5);
+                h.addVertex(1);
+                h.addVertex(2);
+                h.addArc(1, 2, 2);
+                graph.union(h);
             }
         });
     }
